@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.config;
+package com.jaagro.report.biz.datasource;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
