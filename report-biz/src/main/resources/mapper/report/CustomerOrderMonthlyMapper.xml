@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.CustomerOrderDailyMapper" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.CustomerOrderDaily" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderMonthlyMapper" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
     <result column="customer_id" property="customerId" jdbcType="INTEGER" />
@@ -29,15 +29,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from customer_order_daily
+    from customer_order_monthly
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from customer_order_daily
+    delete from customer_order_monthly
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.CustomerOrderDaily" >
-    insert into customer_order_daily (id, report_time, customer_id, 
+  <insert id="insert" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+    insert into customer_order_monthly (id, report_time, customer_id, 
       customer_name, order_quantity, waybill_quantity, 
       anomaly_waybill_quantity, goods_type, amount, 
       tonnage, income_freight, income_anomaly_cost, 
@@ -52,8 +52,8 @@
       #{grossProfitRate,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderDaily" >
-    insert into customer_order_daily
+  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+    insert into customer_order_monthly
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -167,8 +167,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderDaily" >
-    update customer_order_daily
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+    update customer_order_monthly
     <set >
       <if test="reportTime != null" >
         report_time = #{reportTime,jdbcType=VARCHAR},
@@ -224,8 +224,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.CustomerOrderDaily" >
-    update customer_order_daily
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+    update customer_order_monthly
     set report_time = #{reportTime,jdbcType=VARCHAR},
       customer_id = #{customerId,jdbcType=INTEGER},
       customer_name = #{customerName,jdbcType=VARCHAR},
