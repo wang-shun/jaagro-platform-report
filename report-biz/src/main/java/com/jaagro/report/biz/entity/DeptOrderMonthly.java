@@ -3,19 +3,19 @@ package com.jaagro.report.biz.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DepartWaybillfeeDaily {
+public class DeptOrderMonthly {
     /**
-     * 运单费用报表id
+     * 订单数据报表id
      */
     private Integer id;
 
     /**
-     * 日期(yyyy-mm-dd)
+     * 月份(yyyy-mm)
      */
     private String reportTime;
 
     /**
-     * 部门名称
+     * 项目部名称
      */
     private String departmentName;
 
@@ -30,14 +30,29 @@ public class DepartWaybillfeeDaily {
     private Integer goodsType;
 
     /**
+     * 订单总数
+     */
+    private Integer totalOrderQuantity;
+
+    /**
      * 运单总数
      */
     private Integer totalWaybillQuantity;
 
     /**
+     * 完成运单数
+     */
+    private Integer completeWaybillQuantity;
+
+    /**
      * 异常运单数
      */
     private Integer anomalyWaybillQuantity;
+
+    /**
+     * 拒单量
+     */
+    private Integer refuseWaybillQuantity;
 
     /**
      * 货物数量
@@ -48,36 +63,6 @@ public class DepartWaybillfeeDaily {
      * 货物重量
      */
     private BigDecimal goodsWeight;
-
-    /**
-     * 收入-客户费用
-     */
-    private BigDecimal incomeCustomerFee;
-
-    /**
-     * 收入-异常费用
-     */
-    private BigDecimal incomeAnomalyFee;
-
-    /**
-     * 成本-运力费用
-     */
-    private BigDecimal expendFreight;
-
-    /**
-     * 成本-异常费用
-     */
-    private BigDecimal expendAnomalyFee;
-
-    /**
-     * 毛利
-     */
-    private BigDecimal grossProfit;
-
-    /**
-     * 毛利率
-     */
-    private BigDecimal grossProfitRate;
 
     /**
      * 是否有效(0-无效,1-有效)
@@ -95,48 +80,48 @@ public class DepartWaybillfeeDaily {
     private Date modifyTime;
 
     /**
-     * 运单费用报表id
-     * @return id 运单费用报表id
+     * 订单数据报表id
+     * @return id 订单数据报表id
      */
     public Integer getId() {
         return id;
     }
 
     /**
-     * 运单费用报表id
-     * @param id 运单费用报表id
+     * 订单数据报表id
+     * @param id 订单数据报表id
      */
     public void setId(Integer id) {
         this.id = id;
     }
 
     /**
-     * 日期(yyyy-mm-dd)
-     * @return report_time 日期(yyyy-mm-dd)
+     * 月份(yyyy-mm)
+     * @return report_time 月份(yyyy-mm)
      */
     public String getReportTime() {
         return reportTime;
     }
 
     /**
-     * 日期(yyyy-mm-dd)
-     * @param reportTime 日期(yyyy-mm-dd)
+     * 月份(yyyy-mm)
+     * @param reportTime 月份(yyyy-mm)
      */
     public void setReportTime(String reportTime) {
         this.reportTime = reportTime == null ? null : reportTime.trim();
     }
 
     /**
-     * 部门名称
-     * @return department_name 部门名称
+     * 项目部名称
+     * @return department_name 项目部名称
      */
     public String getDepartmentName() {
         return departmentName;
     }
 
     /**
-     * 部门名称
-     * @param departmentName 部门名称
+     * 项目部名称
+     * @param departmentName 项目部名称
      */
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName == null ? null : departmentName.trim();
@@ -175,6 +160,22 @@ public class DepartWaybillfeeDaily {
     }
 
     /**
+     * 订单总数
+     * @return total_order_quantity 订单总数
+     */
+    public Integer getTotalOrderQuantity() {
+        return totalOrderQuantity;
+    }
+
+    /**
+     * 订单总数
+     * @param totalOrderQuantity 订单总数
+     */
+    public void setTotalOrderQuantity(Integer totalOrderQuantity) {
+        this.totalOrderQuantity = totalOrderQuantity;
+    }
+
+    /**
      * 运单总数
      * @return total_waybill_quantity 运单总数
      */
@@ -191,6 +192,22 @@ public class DepartWaybillfeeDaily {
     }
 
     /**
+     * 完成运单数
+     * @return complete_waybill_quantity 完成运单数
+     */
+    public Integer getCompleteWaybillQuantity() {
+        return completeWaybillQuantity;
+    }
+
+    /**
+     * 完成运单数
+     * @param completeWaybillQuantity 完成运单数
+     */
+    public void setCompleteWaybillQuantity(Integer completeWaybillQuantity) {
+        this.completeWaybillQuantity = completeWaybillQuantity;
+    }
+
+    /**
      * 异常运单数
      * @return anomaly_waybill_quantity 异常运单数
      */
@@ -204,6 +221,22 @@ public class DepartWaybillfeeDaily {
      */
     public void setAnomalyWaybillQuantity(Integer anomalyWaybillQuantity) {
         this.anomalyWaybillQuantity = anomalyWaybillQuantity;
+    }
+
+    /**
+     * 拒单量
+     * @return refuse_waybill_quantity 拒单量
+     */
+    public Integer getRefuseWaybillQuantity() {
+        return refuseWaybillQuantity;
+    }
+
+    /**
+     * 拒单量
+     * @param refuseWaybillQuantity 拒单量
+     */
+    public void setRefuseWaybillQuantity(Integer refuseWaybillQuantity) {
+        this.refuseWaybillQuantity = refuseWaybillQuantity;
     }
 
     /**
@@ -236,102 +269,6 @@ public class DepartWaybillfeeDaily {
      */
     public void setGoodsWeight(BigDecimal goodsWeight) {
         this.goodsWeight = goodsWeight;
-    }
-
-    /**
-     * 收入-客户费用
-     * @return income_customer_fee 收入-客户费用
-     */
-    public BigDecimal getIncomeCustomerFee() {
-        return incomeCustomerFee;
-    }
-
-    /**
-     * 收入-客户费用
-     * @param incomeCustomerFee 收入-客户费用
-     */
-    public void setIncomeCustomerFee(BigDecimal incomeCustomerFee) {
-        this.incomeCustomerFee = incomeCustomerFee;
-    }
-
-    /**
-     * 收入-异常费用
-     * @return income_anomaly_fee 收入-异常费用
-     */
-    public BigDecimal getIncomeAnomalyFee() {
-        return incomeAnomalyFee;
-    }
-
-    /**
-     * 收入-异常费用
-     * @param incomeAnomalyFee 收入-异常费用
-     */
-    public void setIncomeAnomalyFee(BigDecimal incomeAnomalyFee) {
-        this.incomeAnomalyFee = incomeAnomalyFee;
-    }
-
-    /**
-     * 成本-运力费用
-     * @return expend_freight 成本-运力费用
-     */
-    public BigDecimal getExpendFreight() {
-        return expendFreight;
-    }
-
-    /**
-     * 成本-运力费用
-     * @param expendFreight 成本-运力费用
-     */
-    public void setExpendFreight(BigDecimal expendFreight) {
-        this.expendFreight = expendFreight;
-    }
-
-    /**
-     * 成本-异常费用
-     * @return expend_anomaly_fee 成本-异常费用
-     */
-    public BigDecimal getExpendAnomalyFee() {
-        return expendAnomalyFee;
-    }
-
-    /**
-     * 成本-异常费用
-     * @param expendAnomalyFee 成本-异常费用
-     */
-    public void setExpendAnomalyFee(BigDecimal expendAnomalyFee) {
-        this.expendAnomalyFee = expendAnomalyFee;
-    }
-
-    /**
-     * 毛利
-     * @return gross_profit 毛利
-     */
-    public BigDecimal getGrossProfit() {
-        return grossProfit;
-    }
-
-    /**
-     * 毛利
-     * @param grossProfit 毛利
-     */
-    public void setGrossProfit(BigDecimal grossProfit) {
-        this.grossProfit = grossProfit;
-    }
-
-    /**
-     * 毛利率
-     * @return gross_profit_rate 毛利率
-     */
-    public BigDecimal getGrossProfitRate() {
-        return grossProfitRate;
-    }
-
-    /**
-     * 毛利率
-     * @param grossProfitRate 毛利率
-     */
-    public void setGrossProfitRate(BigDecimal grossProfitRate) {
-        this.grossProfitRate = grossProfitRate;
     }
 
     /**

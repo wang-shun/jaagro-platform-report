@@ -1,8 +1,8 @@
 package com.jaagro.report.biz.mapper;
 
-import com.jaagro.report.biz.entity.DepartOrderMonthly;
+import com.jaagro.report.biz.entity.DeptWaybillfeeDaily;
 
-public interface DepartOrderMonthlyMapper {
+public interface DeptWaybillfeeDailyMapper {
     /**
      *
      * @mbggenerated 2018-11-26
@@ -13,29 +13,29 @@ public interface DepartOrderMonthlyMapper {
      *
      * @mbggenerated 2018-11-26
      */
-    int insert(DepartOrderMonthly record);
+    int insert(DeptWaybillfeeDaily record);
 
     /**
      *
      * @mbggenerated 2018-11-26
      */
-    int insertSelective(DepartOrderMonthly record);
+    int insertSelective(DeptWaybillfeeDaily record);
 
     /**
      *
      * @mbggenerated 2018-11-26
      */
-    DepartOrderMonthly selectByPrimaryKey(Integer id);
+    DeptWaybillfeeDaily selectByPrimaryKey(Integer id);
 
     /**
      *
      * @mbggenerated 2018-11-26
      */
-    int updateByPrimaryKeySelective(DepartOrderMonthly record);
+    int updateByPrimaryKeySelective(DeptWaybillfeeDaily record);
 
     /**
      *
      * @mbggenerated 2018-11-26
      */
-    int updateByPrimaryKey(DepartOrderMonthly record);
+    int updateByPrimaryKey(DeptWaybillfeeDaily record);
 }

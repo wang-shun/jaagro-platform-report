@@ -3,7 +3,7 @@ package com.jaagro.report.biz.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DepartWaybillfeeMonthly {
+public class DeptWaybillfeeMonthly {
     /**
      * 运单费用报表id
      */

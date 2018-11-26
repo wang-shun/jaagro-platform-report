@@ -26,7 +26,7 @@ public class UserLogin {
     /**
      * 用户类型
      */
-    private Integer userType;
+    private String userType;
 
     /**
      * 登录ip
@@ -111,7 +111,7 @@ public class UserLogin {
      * 用户类型
      * @return user_type 用户类型
      */
-    public Integer getUserType() {
+    public String getUserType() {
         return userType;
     }
 
@@ -119,8 +119,8 @@ public class UserLogin {
      * 用户类型
      * @param userType 用户类型
      */
-    public void setUserType(Integer userType) {
-        this.userType = userType;
+    public void setUserType(String userType) {
+        this.userType = userType == null ? null : userType.trim();
     }
 
     /**
@@ -169,5 +169,19 @@ public class UserLogin {
      */
     public void setLoginCount(Integer loginCount) {
         this.loginCount = loginCount;
+    }
+
+    @Override
+    public String toString() {
+        return "UserLogin{" +
+                "id=" + id +
+                ", loginDate=" + loginDate +
+                ", userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", userType='" + userType + '\'' +
+                ", loginIp='" + loginIp + '\'' +
+                ", newLoginTime=" + newLoginTime +
+                ", loginCount=" + loginCount +
+                '}';
     }
 }

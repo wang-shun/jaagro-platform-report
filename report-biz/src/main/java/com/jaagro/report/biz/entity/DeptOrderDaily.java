@@ -3,7 +3,7 @@ package com.jaagro.report.biz.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DepartOrderDaily {
+public class DeptOrderDaily {
     /**
      * 订单数据报表id
      */
