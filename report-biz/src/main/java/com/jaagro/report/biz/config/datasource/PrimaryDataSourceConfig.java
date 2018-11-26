@@ -33,7 +33,7 @@ public class PrimaryDataSourceConfig {
 
     @Bean(name = "primarySqlSessionFactoryBean")
     @Primary
-    public SqlSessionFactoryBean primarySqlSessionFactoryBean(DataSource dataSource) throws IOException {
+    public SqlSessionFactoryBean primarySqlSessionFactoryBean(@Qualifier("primaryDataSource") DataSource dataSource) throws IOException {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         //dataSource
         sqlSessionFactoryBean.setDataSource(dataSource);

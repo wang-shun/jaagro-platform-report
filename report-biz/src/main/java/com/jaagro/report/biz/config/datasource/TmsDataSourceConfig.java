@@ -31,7 +31,7 @@ public class TmsDataSourceConfig {
     }
 
     @Bean(name = "tmsSqlSessionFactoryBean")
-    public SqlSessionFactoryBean tmsSqlSessionFactoryBean(DataSource dataSource) throws IOException {
+    public SqlSessionFactoryBean tmsSqlSessionFactoryBean(@Qualifier("tmsDataSource") DataSource dataSource) throws IOException {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         //dataSource
         sqlSessionFactoryBean.setDataSource(dataSource);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderMonthlyMapper" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderMonthlyMapperExt" >
   <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DriverOrderMonthly" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
@@ -38,7 +38,8 @@
     delete from driver_order_monthly
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
     insert into driver_order_monthly (id, report_time, driver_name, 
       driver_id, truck_number, truck_id, 
       receive_waybill_quantity, refuse_waybill_quantity, 
@@ -56,7 +57,8 @@
       #{totalCost,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
     insert into driver_order_monthly
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
