@@ -1,8 +1,18 @@
 package com.jaagro.report.biz.entity;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserLogin {
+/**
+ * @author yj
+ * @since 20181126
+ */
+@Data
+@Accessors(chain = true)
+public class UserLogin implements Serializable{
     /**
      * 
      */
@@ -169,19 +179,5 @@ public class UserLogin {
      */
     public void setLoginCount(Integer loginCount) {
         this.loginCount = loginCount;
-    }
-
-    @Override
-    public String toString() {
-        return "UserLogin{" +
-                "id=" + id +
-                ", loginDate=" + loginDate +
-                ", userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", userType='" + userType + '\'' +
-                ", loginIp='" + loginIp + '\'' +
-                ", newLoginTime=" + newLoginTime +
-                ", loginCount=" + loginCount +
-                '}';
     }
 }

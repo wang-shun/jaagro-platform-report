@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.DriverOrderMonthlyMapper" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderDailyMapperExt" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DriverOrderDaily" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
     <result column="driver_name" property="driverName" jdbcType="VARCHAR" />
@@ -31,15 +31,16 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from driver_order_monthly
+    from driver_order_daily
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from driver_order_monthly
+    delete from driver_order_daily
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
-    insert into driver_order_monthly (id, report_time, driver_name, 
+  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DriverOrderDaily" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
+    insert into driver_order_daily (id, report_time, driver_name, 
       driver_id, truck_number, truck_id, 
       receive_waybill_quantity, refuse_waybill_quantity, 
       anomaly_waybill_quantity, complete_waybill_quantity, 
@@ -56,8 +57,9 @@
       #{totalCost,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
-    insert into driver_order_monthly
+  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DriverOrderDaily" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
+    insert into driver_order_daily
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -177,8 +179,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
-    update driver_order_monthly
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.DriverOrderDaily" >
+    update driver_order_daily
     <set >
       <if test="reportTime != null" >
         report_time = #{reportTime,jdbcType=VARCHAR},
@@ -237,8 +239,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
-    update driver_order_monthly
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.DriverOrderDaily" >
+    update driver_order_daily
     set report_time = #{reportTime,jdbcType=VARCHAR},
       driver_name = #{driverName,jdbcType=VARCHAR},
       driver_id = #{driverId,jdbcType=INTEGER},
