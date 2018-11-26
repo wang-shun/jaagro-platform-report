@@ -20,13 +20,13 @@ import java.lang.reflect.Method;
 @Component
 public class DataSourceAspect {
 
-    @Before("execution(* com.jaagro.report.web.controller..*.*(..))")
+    @Before("execution(* com.jaagro.report.biz.service..*.*(..))")
     public void before(JoinPoint point) {
         Object target = point.getTarget();
         String method = point.getSignature().getName();
         System.out.println("aop apply to " + method);
         Class clazz = target.getClass();
-        Class<?>[] parameterTypes = ((MethodSignature)point.getSignature())
+        Class<?>[] parameterTypes = ((MethodSignature) point.getSignature())
                 .getMethod().getParameterTypes();
 
         try {

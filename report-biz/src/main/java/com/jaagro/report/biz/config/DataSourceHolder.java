@@ -3,6 +3,8 @@ package com.jaagro.report.biz.config;
 import org.springframework.stereotype.Component;
 
 /**
+ * 使datasource注解产生作用
+ *
  * @author tony
  */
 @Component
@@ -14,6 +16,6 @@ public class DataSourceHolder {
     }
 
     public static String getDataSource() {
-            return HOLDER.get();
+        return HOLDER.get();
     }
 }

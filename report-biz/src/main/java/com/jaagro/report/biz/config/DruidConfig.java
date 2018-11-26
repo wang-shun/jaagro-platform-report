@@ -44,7 +44,7 @@ public class DruidConfig {
     }
 
     @Bean
-    public DynamicDataSource dataSource(){
+    public DynamicDataSource dataSource() {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> targetDataSources = new LinkedHashMap<>();
         targetDataSources.put("primary", primaryDataSource());
