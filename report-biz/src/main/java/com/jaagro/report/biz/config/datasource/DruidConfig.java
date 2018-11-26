@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.datasource;
+package com.jaagro.report.biz.config.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;

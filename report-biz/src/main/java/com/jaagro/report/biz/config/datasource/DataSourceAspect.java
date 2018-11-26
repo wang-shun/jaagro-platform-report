@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.datasource;
+package com.jaagro.report.biz.config.datasource;
 
 import com.jaagro.report.api.annotation.DataSource;
 import lombok.extern.slf4j.Slf4j;

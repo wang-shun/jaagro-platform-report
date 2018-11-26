@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.datasource;
+package com.jaagro.report.biz.config.datasource;
 
 import org.springframework.stereotype.Component;
 
