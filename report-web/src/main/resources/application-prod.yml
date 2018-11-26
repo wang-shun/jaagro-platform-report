@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: report
+
+feignClient:
+  application:
+    crm: crm
+    tms: tms
+    user: uaa
