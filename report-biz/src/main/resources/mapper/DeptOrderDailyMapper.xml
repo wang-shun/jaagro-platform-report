@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jaagro.report.biz.mapper.DeptOrderDailyMapperExt" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DeptOrderDaily" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="INTEGER" />
+    <result column="goods_type" property="goodsType" jdbcType="INTEGER" />
+    <result column="total_order_quantity" property="totalOrderQuantity" jdbcType="INTEGER" />
+    <result column="total_waybill_quantity" property="totalWaybillQuantity" jdbcType="INTEGER" />
+    <result column="complete_waybill_quantity" property="completeWaybillQuantity" jdbcType="INTEGER" />
+    <result column="anomaly_waybill_quantity" property="anomalyWaybillQuantity" jdbcType="INTEGER" />
+    <result column="refuse_waybill_quantity" property="refuseWaybillQuantity" jdbcType="INTEGER" />
+    <result column="goods_quantity" property="goodsQuantity" jdbcType="INTEGER" />
+    <result column="goods_weight" property="goodsWeight" jdbcType="DECIMAL" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, report_time, department_name, department_id, goods_type, total_order_quantity, 
+    total_waybill_quantity, complete_waybill_quantity, anomaly_waybill_quantity, refuse_waybill_quantity, 
+    goods_quantity, goods_weight, enabled, create_time, modify_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dept_order_daily
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dept_order_daily
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DeptOrderDaily" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
+    insert into dept_order_daily (id, report_time, department_name, 
+      department_id, goods_type, total_order_quantity, 
+      total_waybill_quantity, complete_waybill_quantity, 
+      anomaly_waybill_quantity, refuse_waybill_quantity, 
+      goods_quantity, goods_weight, enabled, 
+      create_time, modify_time)
+    values (#{id,jdbcType=INTEGER}, #{reportTime,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, 
+      #{departmentId,jdbcType=INTEGER}, #{goodsType,jdbcType=INTEGER}, #{totalOrderQuantity,jdbcType=INTEGER}, 
+      #{totalWaybillQuantity,jdbcType=INTEGER}, #{completeWaybillQuantity,jdbcType=INTEGER}, 
+      #{anomalyWaybillQuantity,jdbcType=INTEGER}, #{refuseWaybillQuantity,jdbcType=INTEGER}, 
+      #{goodsQuantity,jdbcType=INTEGER}, #{goodsWeight,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DeptOrderDaily" useGeneratedKeys="true"
+          keyProperty="id" keyColumn="id">
+    insert into dept_order_daily
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="reportTime != null" >
+        report_time,
+      </if>
+      <if test="departmentName != null" >
+        department_name,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="goodsType != null" >
+        goods_type,
+      </if>
+      <if test="totalOrderQuantity != null" >
+        total_order_quantity,
+      </if>
+      <if test="totalWaybillQuantity != null" >
+        total_waybill_quantity,
+      </if>
+      <if test="completeWaybillQuantity != null" >
+        complete_waybill_quantity,
+      </if>
+      <if test="anomalyWaybillQuantity != null" >
+        anomaly_waybill_quantity,
+      </if>
+      <if test="refuseWaybillQuantity != null" >
+        refuse_waybill_quantity,
+      </if>
+      <if test="goodsQuantity != null" >
+        goods_quantity,
+      </if>
+      <if test="goodsWeight != null" >
+        goods_weight,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="modifyTime != null" >
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="reportTime != null" >
+        #{reportTime,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null" >
+        #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=INTEGER},
+      </if>
+      <if test="totalOrderQuantity != null" >
+        #{totalOrderQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="totalWaybillQuantity != null" >
+        #{totalWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="completeWaybillQuantity != null" >
+        #{completeWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="anomalyWaybillQuantity != null" >
+        #{anomalyWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="refuseWaybillQuantity != null" >
+        #{refuseWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="goodsQuantity != null" >
+        #{goodsQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="goodsWeight != null" >
+        #{goodsWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.DeptOrderDaily" >
+    update dept_order_daily
+    <set >
+      <if test="reportTime != null" >
+        report_time = #{reportTime,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null" >
+        department_name = #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsType != null" >
+        goods_type = #{goodsType,jdbcType=INTEGER},
+      </if>
+      <if test="totalOrderQuantity != null" >
+        total_order_quantity = #{totalOrderQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="totalWaybillQuantity != null" >
+        total_waybill_quantity = #{totalWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="completeWaybillQuantity != null" >
+        complete_waybill_quantity = #{completeWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="anomalyWaybillQuantity != null" >
+        anomaly_waybill_quantity = #{anomalyWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="refuseWaybillQuantity != null" >
+        refuse_waybill_quantity = #{refuseWaybillQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="goodsQuantity != null" >
+        goods_quantity = #{goodsQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="goodsWeight != null" >
+        goods_weight = #{goodsWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.DeptOrderDaily" >
+    update dept_order_daily
+    set report_time = #{reportTime,jdbcType=VARCHAR},
+      department_name = #{departmentName,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=INTEGER},
+      goods_type = #{goodsType,jdbcType=INTEGER},
+      total_order_quantity = #{totalOrderQuantity,jdbcType=INTEGER},
+      total_waybill_quantity = #{totalWaybillQuantity,jdbcType=INTEGER},
+      complete_waybill_quantity = #{completeWaybillQuantity,jdbcType=INTEGER},
+      anomaly_waybill_quantity = #{anomalyWaybillQuantity,jdbcType=INTEGER},
+      refuse_waybill_quantity = #{refuseWaybillQuantity,jdbcType=INTEGER},
+      goods_quantity = #{goodsQuantity,jdbcType=INTEGER},
+      goods_weight = #{goodsWeight,jdbcType=DECIMAL},
+      enabled = #{enabled,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
