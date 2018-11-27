@@ -31,19 +31,22 @@ public class UserLoginServiceImpl implements UserLoginService {
      */
     @Override
     public void createUserLogin(UserLoginDto userLoginDto) {
-
         UserLoginCriteriaDto ulc = new UserLoginCriteriaDto();
         BeanUtils.copyProperties(userLoginDto, ulc);
-//        UserLogin userLoginData = userLoginMapper;
-
-
+        UserLogin userLoginData = userLoginMapper.getUserLoginByCriteria(ulc);
         UserLogin userLogin = new UserLogin();
         BeanUtils.copyProperties(userLoginDto, userLogin);
-        userLogin.setId(null)
-                .setLoginDate(new Date());
-        int result = userLoginMapper.insertSelective(userLogin);
-        if(result < 1) {
-            log.debug("记录创建失败：{}", userLoginDto);
+        if (userLoginData == null) {
+            userLogin.setId(null)
+                    .setLoginDate(new Date());
+            int result = userLoginMapper.insertSelective(userLogin);
+            if (result < 1) {
+                log.debug("记录创建失败：{}", userLoginDto);
+            }
+        } else {
+            userLogin.setId(userLoginData.getId())
+                    .setLoginCount(userLoginData.getLoginCount() + 1);
+            userLoginMapper.updateByPrimaryKeySelective(userLogin);
         }
     }
 
