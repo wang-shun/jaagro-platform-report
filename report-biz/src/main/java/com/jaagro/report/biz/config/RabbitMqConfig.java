@@ -15,12 +15,22 @@ public class RabbitMqConfig {
      */
     public static final String REPORT_SEND_QUEUE = "report.send.queue";
 
+    /**
+     * 日志插入队列
+     */
+    public static final String USER_LOGIN_SEND_QUEUE = "userLogin.send.queue";
+
     public static final String TOPIC_EXCHANGE = "topic.exchange";
     public static final String FANOUT_EXCHANGE = "fanout.exchange";
 
     @Bean
     public Queue reportSendQueue() {
         return new Queue(REPORT_SEND_QUEUE, true);
+    }
+
+    @Bean
+    public Queue userLoginSendQueue() {
+        return new Queue(USER_LOGIN_SEND_QUEUE, true);
     }
 
     /**
@@ -47,5 +57,10 @@ public class RabbitMqConfig {
     @Bean
     public Binding reportSendBindingTopic() {
         return BindingBuilder.bind(reportSendQueue()).to(topicExchange()).with("report.send");
+    }
+
+    @Bean
+    public Binding userLoginSendBindingTopic() {
+        return BindingBuilder.bind(userLoginSendQueue()).to(topicExchange()).with("userLogin.send");
     }
 }
