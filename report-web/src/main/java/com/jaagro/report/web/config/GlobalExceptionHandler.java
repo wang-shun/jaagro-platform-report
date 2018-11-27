@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value=MethodArgumentNotValidException.class)
     @ResponseBody
-    private BaseResponse methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException ex){
+    private BaseResponse methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex){
         log.info("methodArgumentNotValidExceptionHandler",ex);
         //处理Validation异常
         StringBuffer errorMsg = new StringBuffer();
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value=Exception.class)
     @ResponseBody
-    private BaseResponse exceptionHandler(HttpServletRequest request, Exception ex){
+    private BaseResponse exceptionHandler(Exception ex){
         log.info("exceptionHandler",ex);
         return BaseResponse.errorInstance(ResponseStatusCode.SERVER_ERROR.getCode(), ex.getMessage());
     }
