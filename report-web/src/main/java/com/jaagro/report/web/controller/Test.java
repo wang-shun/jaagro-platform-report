@@ -1,6 +1,5 @@
 package com.jaagro.report.web.controller;
 
-import com.jaagro.report.biz.entity.UserLogin;
 import com.jaagro.report.biz.mapper.report.UserLoginMapperExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

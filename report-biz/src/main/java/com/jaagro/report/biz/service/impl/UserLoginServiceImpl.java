@@ -1,11 +1,14 @@
 package com.jaagro.report.biz.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.jaagro.report.api.dto.UserLoginCriteriaDto;
 import com.jaagro.report.api.dto.UserLoginDto;
 import com.jaagro.report.api.service.UserLoginService;
+import com.jaagro.report.biz.config.RabbitMqConfig;
 import com.jaagro.report.biz.entity.UserLogin;
 import com.jaagro.report.biz.mapper.report.UserLoginMapperExt;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,13 +44,15 @@ public class UserLoginServiceImpl implements UserLoginService {
                     .setLoginDate(new Date());
             int result = userLoginMapper.insertSelective(userLogin);
             if (result < 1) {
-                log.debug("记录创建失败：{}", userLoginDto);
+                log.warn("记录创建失败：{}", userLoginDto);
             }
-        } else {
-            userLogin.setId(userLoginData.getId())
-                    .setLoginCount(userLoginData.getLoginCount() + 1);
-            userLoginMapper.updateByPrimaryKeySelective(userLogin);
         }
+    }
+
+    @RabbitListener(queues = RabbitMqConfig.USER_LOGIN_SEND_QUEUE)
+    private void createUserLoginByMq(String result) {
+        UserLoginDto userLoginDto = JSON.parseObject(result, UserLoginDto.class);
+        createUserLogin(userLoginDto);
     }
 
     /**
