@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * @author tony
  */
@@ -17,7 +20,8 @@ public class Test {
 
     @GetMapping("/test")
     public void test(){
-        UserLogin userLogin = userLoginMapper.selectByPrimaryKey(1);
-        System.out.println(userLogin);
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(sdf.format(date));
     }
 }
