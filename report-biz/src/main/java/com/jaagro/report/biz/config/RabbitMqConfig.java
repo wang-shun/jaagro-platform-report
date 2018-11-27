@@ -20,8 +20,8 @@ public class RabbitMqConfig {
      */
     public static final String USER_LOGIN_SEND_QUEUE = "userLogin.send.queue";
 
-    public static final String TOPIC_EXCHANGE = "topic.exchange";
-    public static final String FANOUT_EXCHANGE = "fanout.exchange";
+    private static final String TOPIC_EXCHANGE = "topic.exchange";
+    private static final String FANOUT_EXCHANGE = "fanout.exchange";
 
     @Bean
     public Queue reportSendQueue() {
