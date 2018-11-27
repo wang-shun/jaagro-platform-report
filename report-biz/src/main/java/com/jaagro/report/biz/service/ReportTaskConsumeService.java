@@ -1,0 +1,46 @@
+package com.jaagro.report.biz.service;
+
+import com.jaagro.report.api.constant.ReportDateType;
+import com.jaagro.report.api.constant.ReportTaskType;
+import com.jaagro.report.api.dto.ReportTaskDto;
+import com.jaagro.report.api.service.DriverReportTaskService;
+import com.jaagro.report.biz.config.RabbitMqConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.time.DateUtils;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * 报表任务消费
+ * @author yj
+ * @since 2018/11/27
+ */
+@Service
+@Slf4j
+public class ReportTaskConsumeService {
+    @Autowired
+    private DriverReportTaskService driverReportTaskService;
+    @RabbitListener(queues = RabbitMqConfig.REPORT_SEND_QUEUE)
+    private void consumeTask(ReportTaskDto reportTaskDto){
+        SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat month = new SimpleDateFormat("yyyy-MM");
+        if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())){
+            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())){
+                driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(),-1)));
+            }
+            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())){
+                driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(),-1)));
+            }
+        }else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())){
+
+        }else if (ReportTaskType.ORDER.equals(reportTaskDto.getTaskType())){
+
+        }else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())){
+
+        }
+    }
+}
