@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.entity;
+package com.jaagro.report.api.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,76 +13,71 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class CustomerOrderDaily implements Serializable{
+public class DeptWaybillfeeMonthly implements Serializable{
     /**
-     * 客户报表id
+     * 运单费用报表id
      */
     private Integer id;
 
     /**
-     * 日期(yyyy-mm-dd)
+     * 月份(yyyy-mm)
      */
     private String reportTime;
 
     /**
-     * 客户id
+     * 部门名称
      */
-    private Integer customerId;
+    private String departmentName;
 
     /**
-     * 客户名称
+     * 部门id
      */
-    private String customerName;
+    private Integer departmentId;
 
     /**
-     * 订单总数
-     */
-    private Integer orderQuantity;
-
-    /**
-     * 运单总数
-     */
-    private Integer waybillQuantity;
-
-    /**
-     * 异常单数
-     */
-    private Integer anomalyWaybillQuantity;
-
-    /**
-     * 货物类型
+     * 货物类型(1-毛鸡,2-饲料,3-母猪,4-公猪,5-仔猪,6-生猪)
      */
     private Integer goodsType;
 
     /**
-     * 数量(单位)
+     * 运单总数
      */
-    private Integer amount;
+    private Integer totalWaybillQuantity;
 
     /**
-     * 吨位(单位)
+     * 异常运单数
      */
-    private BigDecimal tonnage;
+    private Integer anomalyWaybillQuantity;
 
     /**
-     * 收入-运费
+     * 货物数量
      */
-    private BigDecimal incomeFreight;
+    private Integer goodsQuantity;
+
+    /**
+     * 货物重量
+     */
+    private BigDecimal goodsWeight;
+
+    /**
+     * 收入-客户费用
+     */
+    private BigDecimal incomeCustomerFee;
 
     /**
      * 收入-异常费用
      */
-    private BigDecimal incomeAnomalyCost;
+    private BigDecimal incomeAnomalyFee;
 
     /**
-     * 成本-运费
+     * 成本-运力费用
      */
     private BigDecimal expendFreight;
 
     /**
      * 成本-异常费用
      */
-    private BigDecimal expendAnomalyCost;
+    private BigDecimal expendAnomalyFee;
 
     /**
      * 毛利
@@ -95,6 +90,11 @@ public class CustomerOrderDaily implements Serializable{
     private BigDecimal grossProfitRate;
 
     /**
+     * 是否有效(0-无效,1-有效)
+     */
+    private Boolean enabled;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -103,4 +103,5 @@ public class CustomerOrderDaily implements Serializable{
      * 修改时间
      */
     private Date modifyTime;
+
 }

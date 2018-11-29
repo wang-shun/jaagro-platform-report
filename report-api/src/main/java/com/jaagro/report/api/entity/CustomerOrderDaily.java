@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.entity;
+package com.jaagro.report.api.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,9 +13,9 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class DeptWaybillfeeDaily implements Serializable{
+public class CustomerOrderDaily implements Serializable{
     /**
-     * 运单费用报表id
+     * 客户报表id
      */
     private Integer id;
 
@@ -25,59 +25,64 @@ public class DeptWaybillfeeDaily implements Serializable{
     private String reportTime;
 
     /**
-     * 部门名称
+     * 客户id
      */
-    private String departmentName;
+    private Integer customerId;
 
     /**
-     * 部门id
+     * 客户名称
      */
-    private Integer departmentId;
+    private String customerName;
 
     /**
-     * 货物类型(1-毛鸡,2-饲料,3-母猪,4-公猪,5-仔猪,6-生猪)
+     * 订单总数
      */
-    private Integer goodsType;
+    private Integer orderQuantity;
 
     /**
      * 运单总数
      */
-    private Integer totalWaybillQuantity;
+    private Integer waybillQuantity;
 
     /**
-     * 异常运单数
+     * 异常单数
      */
     private Integer anomalyWaybillQuantity;
 
     /**
-     * 货物数量
+     * 货物类型
      */
-    private Integer goodsQuantity;
+    private Integer goodsType;
 
     /**
-     * 货物重量
+     * 数量(单位)
      */
-    private BigDecimal goodsWeight;
+    private Integer amount;
 
     /**
-     * 收入-客户费用
+     * 吨位(单位)
      */
-    private BigDecimal incomeCustomerFee;
+    private BigDecimal tonnage;
+
+    /**
+     * 收入-运费
+     */
+    private BigDecimal incomeFreight;
 
     /**
      * 收入-异常费用
      */
-    private BigDecimal incomeAnomalyFee;
+    private BigDecimal incomeAnomalyCost;
 
     /**
-     * 成本-运力费用
+     * 成本-运费
      */
     private BigDecimal expendFreight;
 
     /**
      * 成本-异常费用
      */
-    private BigDecimal expendAnomalyFee;
+    private BigDecimal expendAnomalyCost;
 
     /**
      * 毛利
@@ -90,11 +95,6 @@ public class DeptWaybillfeeDaily implements Serializable{
     private BigDecimal grossProfitRate;
 
     /**
-     * 是否有效(0-无效,1-有效)
-     */
-    private Boolean enabled;
-
-    /**
      * 创建时间
      */
     private Date createTime;
@@ -103,5 +103,4 @@ public class DeptWaybillfeeDaily implements Serializable{
      * 修改时间
      */
     private Date modifyTime;
-
 }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderMonthlyMapperExt" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.api.entity.DriverOrderMonthly" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
     <result column="driver_name" property="driverName" jdbcType="VARCHAR" />
     <result column="driver_id" property="driverId" jdbcType="INTEGER" />
     <result column="truck_number" property="truckNumber" jdbcType="VARCHAR" />
     <result column="truck_id" property="truckId" jdbcType="INTEGER" />
+    <result column="mileage" property="mileage" jdbcType="DECIMAL" />
     <result column="receive_waybill_quantity" property="receiveWaybillQuantity" jdbcType="INTEGER" />
     <result column="refuse_waybill_quantity" property="refuseWaybillQuantity" jdbcType="INTEGER" />
     <result column="anomaly_waybill_quantity" property="anomalyWaybillQuantity" jdbcType="INTEGER" />
@@ -23,7 +24,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, report_time, driver_name, driver_id, truck_number, truck_id, receive_waybill_quantity, 
+    id, report_time, driver_name, driver_id, truck_number, truck_id, mileage, receive_waybill_quantity,
     refuse_waybill_quantity, anomaly_waybill_quantity, complete_waybill_quantity, avg_receive_duration, 
     load_punctuality_rate, unload_punctuality_rate, freight, anomaly_cost, total_cost, 
     enabled, create_time, modify_time
@@ -38,10 +39,10 @@
     delete from driver_order_monthly
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" useGeneratedKeys="true"
+  <insert id="insert" parameterType="com.jaagro.report.api.entity.DriverOrderMonthly" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into driver_order_monthly (id, report_time, driver_name, 
-      driver_id, truck_number, truck_id, 
+      driver_id, truck_number, truck_id, mileage,
       receive_waybill_quantity, refuse_waybill_quantity, 
       anomaly_waybill_quantity, complete_waybill_quantity, 
       avg_receive_duration, load_punctuality_rate, 
@@ -49,7 +50,7 @@
       total_cost, enabled, create_time, 
       modify_time)
     values (#{id,jdbcType=INTEGER}, #{reportTime,jdbcType=VARCHAR}, #{driverName,jdbcType=VARCHAR}, 
-      #{driverId,jdbcType=INTEGER}, #{truckNumber,jdbcType=VARCHAR}, #{truckId,jdbcType=INTEGER}, 
+      #{driverId,jdbcType=INTEGER}, #{truckNumber,jdbcType=VARCHAR}, #{truckId,jdbcType=INTEGER}, #{mileage,jdbcType=DECIMAL},
       #{receiveWaybillQuantity,jdbcType=INTEGER}, #{refuseWaybillQuantity,jdbcType=INTEGER}, 
       #{anomalyWaybillQuantity,jdbcType=INTEGER}, #{completeWaybillQuantity,jdbcType=INTEGER}, 
       #{avgReceiveDuration,jdbcType=DECIMAL}, #{loadPunctualityRate,jdbcType=DECIMAL}, 
@@ -57,7 +58,7 @@
       #{totalCost,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" useGeneratedKeys="true"
+  <insert id="insertSelective" parameterType="com.jaagro.report.api.entity.DriverOrderMonthly" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into driver_order_monthly
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -78,6 +79,9 @@
       </if>
       <if test="truckId != null" >
         truck_id,
+      </if>
+      <if test="mileage != null" >
+        mileage,
       </if>
       <if test="receiveWaybillQuantity != null" >
         receive_waybill_quantity,
@@ -138,6 +142,9 @@
       <if test="truckId != null" >
         #{truckId,jdbcType=INTEGER},
       </if>
+      <if test="mileage != null" >
+        #{truckId,jdbcType=DECIMAL},
+      </if>
       <if test="receiveWaybillQuantity != null" >
         #{receiveWaybillQuantity,jdbcType=INTEGER},
       </if>
@@ -179,7 +186,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.api.entity.DriverOrderMonthly" >
     update driver_order_monthly
     <set >
       <if test="reportTime != null" >
@@ -196,6 +203,9 @@
       </if>
       <if test="truckId != null" >
         truck_id = #{truckId,jdbcType=INTEGER},
+      </if>
+      <if test="mileage != null" >
+        truck_id = #{mileage,jdbcType=INTEGER},
       </if>
       <if test="receiveWaybillQuantity != null" >
         receive_waybill_quantity = #{receiveWaybillQuantity,jdbcType=INTEGER},
@@ -239,13 +249,14 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.DriverOrderMonthly" >
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.api.entity.DriverOrderMonthly" >
     update driver_order_monthly
     set report_time = #{reportTime,jdbcType=VARCHAR},
       driver_name = #{driverName,jdbcType=VARCHAR},
       driver_id = #{driverId,jdbcType=INTEGER},
       truck_number = #{truckNumber,jdbcType=VARCHAR},
       truck_id = #{truckId,jdbcType=INTEGER},
+      mileage = #{mileage,jdbcType=DECIMAL},
       receive_waybill_quantity = #{receiveWaybillQuantity,jdbcType=INTEGER},
       refuse_waybill_quantity = #{refuseWaybillQuantity,jdbcType=INTEGER},
       anomaly_waybill_quantity = #{anomalyWaybillQuantity,jdbcType=INTEGER},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jaagro.report.biz.mapper.report.DeptWaybillfeeDailyMapperExt" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.DeptWaybillfeeDaily" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.api.entity.DeptWaybillfeeDaily" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
     <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
@@ -37,7 +37,7 @@
     delete from dept_waybillfee_daily
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.DeptWaybillfeeDaily" useGeneratedKeys="true"
+  <insert id="insert" parameterType="com.jaagro.report.api.entity.DeptWaybillfeeDaily" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into dept_waybillfee_daily (id, report_time, department_name, 
       department_id, goods_type, total_waybill_quantity, 
@@ -54,7 +54,7 @@
       #{grossProfitRate,jdbcType=DECIMAL}, #{enabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.DeptWaybillfeeDaily" useGeneratedKeys="true"
+  <insert id="insertSelective" parameterType="com.jaagro.report.api.entity.DeptWaybillfeeDaily" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into dept_waybillfee_daily
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -170,7 +170,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.DeptWaybillfeeDaily" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.api.entity.DeptWaybillfeeDaily" >
     update dept_waybillfee_daily
     <set >
       <if test="reportTime != null" >
@@ -227,7 +227,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.DeptWaybillfeeDaily" >
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.api.entity.DeptWaybillfeeDaily" >
     update dept_waybillfee_daily
     set report_time = #{reportTime,jdbcType=VARCHAR},
       department_name = #{departmentName,jdbcType=VARCHAR},

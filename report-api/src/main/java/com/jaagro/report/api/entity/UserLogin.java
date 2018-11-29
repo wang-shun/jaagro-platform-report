@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.entity;
+package com.jaagro.report.api.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
