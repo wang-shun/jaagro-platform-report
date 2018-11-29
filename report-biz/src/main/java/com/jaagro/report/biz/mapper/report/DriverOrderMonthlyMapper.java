@@ -1,6 +1,6 @@
 package com.jaagro.report.biz.mapper.report;
 
-import com.jaagro.report.biz.entity.DriverOrderMonthly;
+import com.jaagro.report.api.entity.DriverOrderMonthly;
 
 public interface DriverOrderMonthlyMapper {
     /**

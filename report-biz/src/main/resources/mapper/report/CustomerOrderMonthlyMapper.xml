@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderMonthlyMapperExt" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.api.entity.CustomerOrderMonthly" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="report_time" property="reportTime" jdbcType="VARCHAR" />
     <result column="customer_id" property="customerId" jdbcType="INTEGER" />
@@ -36,7 +36,7 @@
     delete from customer_order_monthly
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" useGeneratedKeys="true"
+  <insert id="insert" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into customer_order_monthly (id, report_time, customer_id, 
       customer_name, order_quantity, waybill_quantity, 
@@ -53,7 +53,7 @@
       #{grossProfitRate,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" useGeneratedKeys="true"
+  <insert id="insertSelective" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into customer_order_monthly
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -169,7 +169,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly" >
     update customer_order_monthly
     <set >
       <if test="reportTime != null" >
@@ -226,7 +226,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.CustomerOrderMonthly" >
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly" >
     update customer_order_monthly
     set report_time = #{reportTime,jdbcType=VARCHAR},
       customer_id = #{customerId,jdbcType=INTEGER},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jaagro.report.biz.mapper.report.UserLoginMapperExt" >
-  <resultMap id="BaseResultMap" type="com.jaagro.report.biz.entity.UserLogin" >
+  <resultMap id="BaseResultMap" type="com.jaagro.report.api.entity.UserLogin" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="login_date" property="loginDate" jdbcType="DATE" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
@@ -24,7 +24,7 @@
     delete from user_login
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.jaagro.report.biz.entity.UserLogin" useGeneratedKeys="true"
+  <insert id="insert" parameterType="com.jaagro.report.api.entity.UserLogin" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into user_login (id, login_date, user_id, 
       user_name, user_type, login_ip, 
@@ -33,7 +33,7 @@
       #{userName,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{loginIp,jdbcType=VARCHAR}, 
       #{newLoginTime,jdbcType=TIMESTAMP}, #{loginCount,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.jaagro.report.biz.entity.UserLogin" useGeneratedKeys="true"
+  <insert id="insertSelective" parameterType="com.jaagro.report.api.entity.UserLogin" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into user_login
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -89,7 +89,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.biz.entity.UserLogin" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaagro.report.api.entity.UserLogin" >
     update user_login
     <set >
       <if test="loginDate != null" >
@@ -116,7 +116,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.biz.entity.UserLogin" >
+  <update id="updateByPrimaryKey" parameterType="com.jaagro.report.api.entity.UserLogin" >
     update user_login
     set login_date = #{loginDate,jdbcType=DATE},
       user_id = #{userId,jdbcType=INTEGER},

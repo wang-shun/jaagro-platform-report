@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.entity;
+package com.jaagro.report.api.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,14 +13,14 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class DriverOrderDaily implements Serializable{
+public class DriverOrderMonthly implements Serializable{
     /**
      * 司机报表id
      */
     private Integer id;
 
     /**
-     * 日期(yyyy-mm-dd)
+     * 统计时间(yyyy-mm-dd)
      */
     private String reportTime;
 
@@ -43,6 +43,10 @@ public class DriverOrderDaily implements Serializable{
      * 车辆id
      */
     private Integer truckId;
+    /**
+     * 公里数
+     */
+    private BigDecimal mileage;
 
     /**
      * 接单量

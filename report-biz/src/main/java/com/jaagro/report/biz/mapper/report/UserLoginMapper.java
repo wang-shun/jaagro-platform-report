@@ -1,6 +1,6 @@
 package com.jaagro.report.biz.mapper.report;
 
-import com.jaagro.report.biz.entity.UserLogin;
+import com.jaagro.report.api.entity.UserLogin;
 
 public interface UserLoginMapper {
     /**

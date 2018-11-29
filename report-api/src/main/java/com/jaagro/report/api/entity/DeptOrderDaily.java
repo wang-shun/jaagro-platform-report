@@ -1,4 +1,4 @@
-package com.jaagro.report.biz.entity;
+package com.jaagro.report.api.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,19 +13,19 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class DeptWaybillfeeMonthly implements Serializable{
+public class DeptOrderDaily implements Serializable{
     /**
-     * 运单费用报表id
+     * 订单数据报表id
      */
     private Integer id;
 
     /**
-     * 月份(yyyy-mm)
+     * 日期(yyyy-mm-dd)
      */
     private String reportTime;
 
     /**
-     * 部门名称
+     * 项目部名称
      */
     private String departmentName;
 
@@ -40,14 +40,29 @@ public class DeptWaybillfeeMonthly implements Serializable{
     private Integer goodsType;
 
     /**
+     * 订单总数
+     */
+    private Integer totalOrderQuantity;
+
+    /**
      * 运单总数
      */
     private Integer totalWaybillQuantity;
 
     /**
+     * 完成运单数
+     */
+    private Integer completeWaybillQuantity;
+
+    /**
      * 异常运单数
      */
     private Integer anomalyWaybillQuantity;
+
+    /**
+     * 拒单量
+     */
+    private Integer refuseWaybillQuantity;
 
     /**
      * 货物数量
@@ -58,36 +73,6 @@ public class DeptWaybillfeeMonthly implements Serializable{
      * 货物重量
      */
     private BigDecimal goodsWeight;
-
-    /**
-     * 收入-客户费用
-     */
-    private BigDecimal incomeCustomerFee;
-
-    /**
-     * 收入-异常费用
-     */
-    private BigDecimal incomeAnomalyFee;
-
-    /**
-     * 成本-运力费用
-     */
-    private BigDecimal expendFreight;
-
-    /**
-     * 成本-异常费用
-     */
-    private BigDecimal expendAnomalyFee;
-
-    /**
-     * 毛利
-     */
-    private BigDecimal grossProfit;
-
-    /**
-     * 毛利率
-     */
-    private BigDecimal grossProfitRate;
 
     /**
      * 是否有效(0-无效,1-有效)

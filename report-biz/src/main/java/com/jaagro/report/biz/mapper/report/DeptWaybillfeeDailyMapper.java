@@ -1,6 +1,6 @@
 package com.jaagro.report.biz.mapper.report;
 
-import com.jaagro.report.biz.entity.DeptWaybillfeeDaily;
+import com.jaagro.report.api.entity.DeptWaybillfeeDaily;
 
 public interface DeptWaybillfeeDailyMapper {
     /**

@@ -24,7 +24,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     /**
      * 缓存过期时间
      */
-    @Value("${cache.expiration}")
+//    @Value("${cache.expiration}")
+    @Value("10")
     private long cacheExpiration;
 
     /**

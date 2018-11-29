@@ -5,7 +5,7 @@ import com.jaagro.report.api.dto.UserLoginCriteriaDto;
 import com.jaagro.report.api.dto.UserLoginDto;
 import com.jaagro.report.api.service.UserLoginService;
 import com.jaagro.report.biz.config.RabbitMqConfig;
-import com.jaagro.report.biz.entity.UserLogin;
+import com.jaagro.report.api.entity.UserLogin;
 import com.jaagro.report.biz.mapper.report.UserLoginMapperExt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
