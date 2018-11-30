@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.DeptWaybillfeeDailyMapperExt" >
-
+<mapper namespace="com.jaagro.report.biz.mapper.report.DeptWaybillfeeDailyMapperExt">
+    <insert id="batchWaybillFeeDailyInsert" parameterType="list">
+        insert into dept_waybillfee_daily (id, report_time, department_name,
+        department_id, goods_type, total_waybill_quantity, anomaly_waybill_quantity,
+        goods_quantity, goods_weight,
+        income_customer_fee, income_anomaly_fee,
+        expend_freight, expend_anomaly_fee,
+        gross_profit, gross_profit_rate,
+        enabled, create_time,
+        modify_time)
+        values
+        <foreach collection="waybillFeeDailyList" item="item" separator=",">
+            (#{item.id}, #{item.reportTime}, #{item.departmentName},
+            #{item.departmentId}, #{item.goodsType}, #{item.totalWaybillQuantity},#{item.anomalyWaybillQuantity},
+            #{item.goodsQuantity}, #{item.goodsWeight},#{item.incomeCustomerFee},
+            #{item.incomeAnomalyFee},#{item.expendFreight},
+            #{item.expendAnomalyFee}, #{item.grossProfit}, #{item.grossProfitRate}, #{item.enabled},
+            #{item.createTime}, #{item.modifyTime}
+        </foreach>
+    </insert>
+    <delete id="batchDeleteWaybillFeeDailyByDay" parameterType="java.lang.Integer">
+         delete from dept_waybillfee_daily
+         where report_time = #{day,jdbcType=INTEGER}
+  </delete>
 </mapper>
