@@ -11,13 +11,13 @@
         enabled, create_time,
         modify_time)
         values
-        <foreach collection="waybillFeeDailyList" item="item" separator=",">
+        <foreach collection="deptWaybillfeeDailies" item="item" separator=",">
             (#{item.id}, #{item.reportTime}, #{item.departmentName},
             #{item.departmentId}, #{item.goodsType}, #{item.totalWaybillQuantity},#{item.anomalyWaybillQuantity},
             #{item.goodsQuantity}, #{item.goodsWeight},#{item.incomeCustomerFee},
             #{item.incomeAnomalyFee},#{item.expendFreight},
             #{item.expendAnomalyFee}, #{item.grossProfit}, #{item.grossProfitRate}, #{item.enabled},
-            #{item.createTime}, #{item.modifyTime}
+            #{item.createTime}, #{item.modifyTime})
         </foreach>
     </insert>
     <delete id="batchDeleteWaybillFeeDailyByDay" parameterType="java.lang.Integer">

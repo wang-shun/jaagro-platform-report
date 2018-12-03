@@ -3,128 +3,154 @@
 <mapper namespace="com.jaagro.report.biz.mapper.tms.WaybillFeeReportMapperExt">
     <select id="listWaybillFeeStatisticsByDay" parameterType="java.lang.String"
             resultType="com.jaagro.report.api.entity.DeptWaybillfeeDaily">
-
-SELECT  reportTime, departmentId,goodsType,anomalyWaybillQuantity,totalWaybillQuantity, goodsQuantity,
-        goodsWeight,incomeAnomalyFee,expendAnomalyFee,(incomeAnomalyFee - expendAnomalyFee) grossProfit  FROM (
-    SELECT createDate as reportTime,dept departmentId,type goodsType,
-          SUM(anomalyTotal) AS anomalyWaybillQuantity,
-          SUM(waybillTotal) AS totalWaybillQuantity,
-          SUM(QuatityTotal) AS goodsQuantity,
-          SUM(WeightTotal) AS goodsWeight,
-          SUM(incomeAnomalyFee) AS incomeAnomalyFee,
-          SUM(expendAnomalyFee) AS expendAnomalyFee FROM(
+    SELECT reportTime, departmentId,goodsType,anomalyWaybillQuantity,totalWaybillQuantity, goodsQuantity,
+        goodsWeight,incomeAnomalyFee,expendAnomalyFee,(incomeAnomalyFee - expendAnomalyFee) grossProfit FROM (
+        SELECT createDate as reportTime,dept departmentId,type goodsType,
+        SUM(anomalyTotal) AS anomalyWaybillQuantity,
+        SUM(waybillTotal) AS totalWaybillQuantity,
+        SUM(QuatityTotal) AS goodsQuantity,
+        SUM(WeightTotal) AS goodsWeight,
+        SUM(incomeAnomalyFee) AS incomeAnomalyFee,
+        SUM(expendAnomalyFee) AS expendAnomalyFee FROM(
         -- 运单总数统计
-        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6)  THEN 3 END AS type,
-            0 AS anomalyTotal,waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
-            SELECT
-                date_format(w.create_time, '%Y-%m-%d') AS createDate,
-                w.department_id AS dept,
-                ods.goods_type AS type,
-                COUNT(1) AS waybillTotal
-            FROM
-                waybill w
-            INNER JOIN orders ods  on w.order_id = ods.id  WHERE date_format(w.create_time, '%Y-%m-%d')=#{day} GROUP BY createDate,dept,type
+        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type,
+        0 AS anomalyTotal,waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee
+        FROM(
+        SELECT
+        date_format(w.create_time, '%Y-%m-%d') AS createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        COUNT(1) AS waybillTotal
+        FROM
+        waybill w
+        INNER JOIN orders ods on w.order_id = ods.id
+        <if test="day!=null">
+            WHERE date_format(w.create_time, '%Y-%m-%d')=#{day}
+        </if>
+        GROUP BY createDate,dept,type
         ) T_WaybillStatistics
 
         UNION ALL
         -- 数量、重量统计
         SELECT createDate,dept,type,0 AS anomalyTotal,0 AS waybillTotal,SUM(chknQuantity + pigQuantity) AS QuatityTotal,
-               SUM(chknWeight + FodderWeight) AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
-            SELECT
-                SUM( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,
-                SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as  chknWeight,
-                SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as  FodderWeight,
-                SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
-                date_format(w.create_time, '%Y-%m-%d') AS createDate,
-                w.department_id AS dept,
-                CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6)  THEN 3 END AS type,
-                g.waybill_id
-            FROM waybill w
-                INNER JOIN orders o on w.order_id=o.id
-                INNER JOIN waybill_goods g ON w.id = g.waybill_id
-                WHERE w.waybill_status='已完成' AND date_format(w.create_time, '%Y-%m-%d')=#{day}  GROUP BY createDate,dept,type,waybill_id
+        SUM(chknWeight + FodderWeight) AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
+        SELECT
+        SUM( CASE WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,
+        SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as chknWeight,
+        SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as FodderWeight,
+        SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
+        date_format(w.create_time, '%Y-%m-%d') AS createDate,
+        w.department_id AS dept,
+        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6) THEN 3 END AS type,
+        g.waybill_id
+        FROM waybill w
+        INNER JOIN orders o on w.order_id=o.id
+        INNER JOIN waybill_goods g ON w.id = g.waybill_id
+        WHERE w.waybill_status='已完成'
+        <if test="day!=null">
+            AND date_format(w.create_time, '%Y-%m-%d')=#{day}
+        </if>
+        GROUP BY createDate,dept,type,waybill_id
         ) T_QuatityTotalWeightTotalStatistics GROUP BY createDate,dept,type
 
         UNION ALL
         -- 异常单数统计
-        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6)  THEN 3 END AS type,
-            COUNT(1)  AS anomalyTotal ,0 AS waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
-            SELECT DISTINCT
-                date_format(t.create_time, '%Y-%m-%d') AS createDate,
-                w.department_id AS dept,
-                ods.goods_type AS type,
-                t.waybill_id
-            FROM waybill w
-                RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-                INNER JOIN orders ods ON w.order_id = ods.id
-                WHERE date_format(t.create_time, '%Y-%m-%d')=#{day}
-        )  T_AnomalyWaybillStatistics  GROUP BY createDate,dept,type
+        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type,
+        COUNT(1) AS anomalyTotal ,0 AS waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS
+        expendAnomalyFee FROM(
+        SELECT DISTINCT
+        date_format(t.create_time, '%Y-%m-%d') AS createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        t.waybill_id
+        FROM waybill w
+        RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
+        INNER JOIN orders ods ON w.order_id = ods.id
+        <if test="day!=null">
+            WHERE date_format(t.create_time, '%Y-%m-%d')=#{day}
+        </if>
+        ) T_AnomalyWaybillStatistics GROUP BY createDate,dept,type
 
         UNION ALL
         -- 异常费用收入
-        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6)  THEN 3 END AS type, 0 AS anomalyTotal,0 AS waybillTotal,
-             0 AS QuatityTotal,0 AS WeightTotal ,SUM(money) incomeAnomalyFee, 0 AS expendAnomalyFee FROM (
-             SELECT DISTINCT
-                 date_format(wcf.create_time, '%Y-%m-%d') createDate,
-                 w.department_id AS dept,
-                 ods.goods_type AS type,
-                 wa.waybill_id waybillId,
-                 wfa.adjust_type adjustType,
-                 wcf.money
-             FROM waybill w
-                 INNER JOIN orders ods ON w.order_id = ods.id
-                 RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
-                 INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
-                 INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-                 WHERE  wa.audit_status="已通过" AND wcf.money >0 AND  wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND  wfa.adjust_type=3
-                 UNION ALL
-            SELECT DISTINCT
-                 date_format(wtf.create_time, '%Y-%m-%d') createDate,
-                 w.department_id AS dept,
-                 ods.goods_type AS type,
-                 wa.waybill_id waybillId,
-                 wfa.adjust_type adjustType,
-                 wtf.money
-             FROM waybill w
-                 INNER JOIN orders ods ON w.order_id = ods.id
-                 RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
-                 INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
-                 INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-                 WHERE  wa.audit_status="已通过" AND wtf.money >0 AND  wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND wfa.adjust_type=3
-                 ) T_IncomeAnomalyFeeTotalStatistics  WHERE createDate=#{day}  GROUP BY createDate,dept,type
-         UNION ALL
-         -- 异常费用支出
-         SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6)  THEN 3 END AS type, 0 AS anomalyTotal,0 AS waybillTotal,
-             0 AS QuatityTotal,0 AS WeightTotal,0 AS incomeAnomalyFee,SUM(money) expendAnomalyFee FROM (
-             SELECT DISTINCT
-                 date_format(wcf.create_time, '%Y-%m-%d') createDate,
-                 w.department_id AS dept,
-                 ods.goods_type AS type,
-                 wa.waybill_id waybillId,
-                 wfa.adjust_type adjustType,
-                 wcf.money
-             FROM waybill w
-                 INNER JOIN orders ods ON w.order_id = ods.id
-                 RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
-                 INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
-                 INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-                 WHERE  wa.audit_status="已通过" AND wcf.money >0 AND  wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND  wfa.adjust_type=4
-                 UNION ALL
-             SELECT DISTINCT
-                 date_format(wtf.create_time, '%Y-%m-%d') createDate,
-                 w.department_id AS dept,
-                 ods.goods_type AS type,
-                 wa.waybill_id waybillId,
-                 wfa.adjust_type adjustType,
-                 wtf.money
-             FROM waybill w
-                 INNER JOIN orders ods ON w.order_id = ods.id
-                 RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
-                 INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
-                 INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-                 WHERE  wa.audit_status='已通过' AND wtf.money >0 AND  wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND wfa.adjust_type=4
-             )  T_ExpendAnomalyFeeTotalStatistics  WHERE createDate=#{day} GROUP BY createDate,dept,type
-    )Table0 GROUP BY createDate,dept,type ORDER BY createDate
- )totalTable
-</select>
+        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type, 0 AS
+        anomalyTotal,0 AS waybillTotal,
+        0 AS QuatityTotal,0 AS WeightTotal ,SUM(money) incomeAnomalyFee, 0 AS expendAnomalyFee FROM (
+        SELECT DISTINCT
+        date_format(wcf.create_time, '%Y-%m-%d') createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        wa.waybill_id waybillId,
+        wfa.adjust_type adjustType,
+        wcf.money
+        FROM waybill w
+        INNER JOIN orders ods ON w.order_id = ods.id
+        RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+        INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
+        INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
+        WHERE wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND
+        wfa.adjust_type=3
+        UNION ALL
+        SELECT DISTINCT
+        date_format(wtf.create_time, '%Y-%m-%d') createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        wa.waybill_id waybillId,
+        wfa.adjust_type adjustType,
+        wtf.money
+        FROM waybill w
+        INNER JOIN orders ods ON w.order_id = ods.id
+        RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+        INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
+        INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
+        WHERE wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
+        wfa.adjust_type=3
+        ) T_IncomeAnomalyFeeTotalStatistics
+        <if test="day!=null">
+            WHERE createDate=#{day}
+        </if>
+        GROUP BY createDate,dept,type
+
+        UNION ALL
+        -- 异常费用支出
+        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type, 0 AS
+        anomalyTotal,0 AS waybillTotal,
+        0 AS QuatityTotal,0 AS WeightTotal,0 AS incomeAnomalyFee,SUM(money) expendAnomalyFee FROM (
+        SELECT DISTINCT
+        date_format(wcf.create_time, '%Y-%m-%d') createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        wa.waybill_id waybillId,
+        wfa.adjust_type adjustType,
+        wcf.money
+        FROM waybill w
+        INNER JOIN orders ods ON w.order_id = ods.id
+        RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+        INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
+        INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
+        WHERE wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND
+        wfa.adjust_type=4
+        UNION ALL
+        SELECT DISTINCT
+        date_format(wtf.create_time, '%Y-%m-%d') createDate,
+        w.department_id AS dept,
+        ods.goods_type AS type,
+        wa.waybill_id waybillId,
+        wfa.adjust_type adjustType,
+        wtf.money
+        FROM waybill w
+        INNER JOIN orders ods ON w.order_id = ods.id
+        RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+        INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
+        INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
+        WHERE wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
+        wfa.adjust_type=4
+        ) T_ExpendAnomalyFeeTotalStatistics
+        <if test="day!=null">
+        WHERE createDate=#{day}
+        </if>
+        GROUP BY createDate,dept,type
+        )Table0 GROUP BY createDate,dept,type ORDER BY createDate
+    )totalTable
+    </select>
 </mapper>
