@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -54,6 +55,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -65,6 +67,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
         createDriverOrderMonthlyReport(month);
     }
@@ -77,6 +80,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Override
     @Async("reportExecutor")
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -89,6 +93,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Override
     @Async("reportExecutor")
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(String month) {
         createDriverOrderMonthlyReport(month);
     }

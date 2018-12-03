@@ -50,9 +50,10 @@ public class OrderReportServiceImpl implements OrderReportService {
      *
      * @param orderReportDto
      */
+
+    @Override
     @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void createDailyReport(OrderReportDto orderReportDto) {
         String day = orderReportDto.getReportTime();
         List<DeptOrderDaily> deptOrderDailyList = new ArrayList<>();
@@ -72,9 +73,10 @@ public class OrderReportServiceImpl implements OrderReportService {
      *
      * @param orderReportDto yyyyMM
      */
+
+    @Override
     @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void createMonthlyReport(OrderReportDto orderReportDto) {
         String month = orderReportDto.getReportTime();
         List<DeptOrderMonthly> deptOrderMonthlyList = new ArrayList<>();
@@ -106,8 +108,9 @@ public class OrderReportServiceImpl implements OrderReportService {
         return deptOrderDailyMapperExt.getOrderMonthlyDataFromOrderDaily(orderReportDto);
     }
 
-    @Cacheable
+
     @Override
+    @Cacheable
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
@@ -128,8 +131,9 @@ public class OrderReportServiceImpl implements OrderReportService {
         return orderDailyList;
     }
 
-    @Cacheable
+
     @Override
+    @Cacheable
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
