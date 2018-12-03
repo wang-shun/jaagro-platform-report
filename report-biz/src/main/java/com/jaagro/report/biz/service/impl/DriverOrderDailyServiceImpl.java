@@ -6,6 +6,8 @@ import com.jaagro.report.api.service.DriverOrderDailyService;
 import com.jaagro.report.biz.mapper.report.DriverOrderDailyMapperExt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverOrderDailyServiceImpl implements DriverOrderDailyService {
     @Autowired
     private DriverOrderDailyMapperExt driverOrderDailyMapperExt;
@@ -27,6 +30,7 @@ public class DriverOrderDailyServiceImpl implements DriverOrderDailyService {
      * @return
      */
     @Override
+    @Cacheable
     public List<DriverOrderDaily> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto) {
         return driverOrderDailyMapperExt.listByCriteria(listDriverReportCriteriaDto);
     }
