@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class DeptOrderMonthly implements Serializable{
+public class DeptOrderMonthly implements Serializable {
     /**
      * 订单数据报表id
      */

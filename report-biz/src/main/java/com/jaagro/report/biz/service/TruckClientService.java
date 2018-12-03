@@ -16,6 +16,7 @@ import java.util.List;
 public interface TruckClientService {
     /**
      * 批量查询车辆信息
+     *
      * @param truckIdList
      * @return
      */

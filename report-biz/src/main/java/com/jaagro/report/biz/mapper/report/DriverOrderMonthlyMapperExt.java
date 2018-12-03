@@ -1,6 +1,10 @@
 package com.jaagro.report.biz.mapper.report;
 
+import com.jaagro.report.api.dto.ListDriverReportCriteriaDto;
+import com.jaagro.report.api.entity.DriverOrderMonthly;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author yj
@@ -13,4 +17,18 @@ public interface DriverOrderMonthlyMapperExt extends DriverOrderMonthlyMapper {
      * @return
      */
     Integer deleteByReportTime(@Param("reportTime") String reportTime);
+
+    /**
+     * 批量插入
+     * @param driverOrderMonthlyList
+     * @return
+     */
+    Integer batchInsert(@Param("driverOrderMonthlyList") List<DriverOrderMonthly> driverOrderMonthlyList);
+
+    /**
+     * 查询月报表列表
+     * @param listDriverReportCriteriaDto
+     * @return
+     */
+    List<DriverOrderMonthly> listByCriteria(@Param("listDriverReportCriteriaDto") ListDriverReportCriteriaDto listDriverReportCriteriaDto);
 }
