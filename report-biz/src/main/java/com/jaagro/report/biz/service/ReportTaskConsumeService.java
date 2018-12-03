@@ -64,13 +64,13 @@ public class ReportTaskConsumeService {
             }
 
         } else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())) {
-
             if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
                 String dayString = day.format(DateUtils.addDays(new Date(), -1));
                 waybillFeeReportTaskService.createDailyReport(dayString);
             }
             if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())) {
-                month.format(DateUtils.addDays(new Date(), -1));
+                String monthString = month.format(DateUtils.addDays(new Date(), -1));
+                waybillFeeReportTaskService.createMonthlyReport(monthString);
             }
         }
     }
