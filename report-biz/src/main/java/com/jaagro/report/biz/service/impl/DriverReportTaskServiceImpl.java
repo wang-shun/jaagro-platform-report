@@ -16,6 +16,8 @@ import com.jaagro.utils.ResponseStatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +34,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
+@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Autowired
     private DriverReportMapperExt driverReportMapperExt;
@@ -50,6 +53,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param day yyyy-MM-dd
      */
     @Override
+    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
     public void createDailyReport(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -60,6 +64,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param month yyyy-MM
      */
     @Override
+    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
     public void createMonthlyReport(String month) {
         createDriverOrderMonthlyReport(month);
     }
@@ -71,6 +76,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
+    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
     public void createDailyReportAsync(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -82,9 +88,11 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
+    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
     public void createMonthlyReportAsync(String month) {
         createDriverOrderMonthlyReport(month);
     }
+
 
     private void createDriverOrderDailyReport(String day) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -137,7 +145,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
             List<DriverOrderMonthly> driverOrderMonthlyList = driverOrderDailyMapperExt.listByBeginTimeAndEndTime(month, endMonth);
-            log.info("driverOrderMonthlyList={}",JSON.toJSONString(driverOrderMonthlyList));
+            log.info("driverOrderMonthlyList={}", JSON.toJSONString(driverOrderMonthlyList));
             if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
                 // 物理删除原有日报表
                 driverOrderMonthlyMapperExt.deleteByReportTime(month);
@@ -302,9 +310,9 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                     if (!CollectionUtils.isEmpty(loadTotalAndPunctuality)) {
                         if (loadTotalAndPunctuality.get("total") != null && loadTotalAndPunctuality.get("punctuality") != null) {
                             String total = loadTotalAndPunctuality.get("total").toString();
-                            if (!total.equals("0")){
+                            if (!total.equals("0")) {
                                 orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("total").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
-                            }else{
+                            } else {
                                 orderDaily.setLoadPunctualityRate(new BigDecimal("0"));
                             }
 

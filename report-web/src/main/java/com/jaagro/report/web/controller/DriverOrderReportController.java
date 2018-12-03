@@ -8,10 +8,12 @@ import com.jaagro.report.api.service.DriverOrderMonthlyService;
 import com.jaagro.report.api.service.DriverReportTaskService;
 import com.jaagro.report.web.vo.DriverOrderReportVo;
 import com.jaagro.utils.BaseResponse;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,7 @@ import java.util.List;
  * @since 2018/11/30
  */
 @RestController
+@Api(description = "司机订单报表", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class DriverOrderReportController {
     @Autowired
