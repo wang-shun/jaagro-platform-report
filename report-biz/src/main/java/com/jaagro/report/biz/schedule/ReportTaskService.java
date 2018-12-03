@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import static com.jaagro.report.biz.config.RabbitMqConfig.REPORT_SEND_QUEUE;
 import static com.jaagro.report.biz.config.RabbitMqConfig.TOPIC_EXCHANGE;
 
 /**
@@ -88,7 +89,7 @@ public class ReportTaskService {
     }
 
     private void putToQueue(ReportTaskDto reportTaskDto) {
-        amqpTemplate.convertAndSend(TOPIC_EXCHANGE, "report.send", reportTaskDto);
+        amqpTemplate.convertAndSend(TOPIC_EXCHANGE, REPORT_SEND_QUEUE, reportTaskDto);
     }
 
 }

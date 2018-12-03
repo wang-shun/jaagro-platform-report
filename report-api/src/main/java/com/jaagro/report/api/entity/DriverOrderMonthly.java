@@ -43,7 +43,6 @@ public class DriverOrderMonthly implements Serializable{
      * 车辆id
      */
     private Integer truckId;
-
     /**
      * 公里数
      */
