@@ -49,11 +49,6 @@ public class DriverOrderMonthly implements Serializable{
     private BigDecimal mileage;
 
     /**
-     * 公里数
-     */
-    private BigDecimal mileage;
-
-    /**
      * 接单量
      */
     private Integer receiveWaybillQuantity;
