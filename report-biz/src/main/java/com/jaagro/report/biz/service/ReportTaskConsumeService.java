@@ -4,12 +4,15 @@ import com.jaagro.report.api.constant.ReportDateType;
 import com.jaagro.report.api.constant.ReportTaskType;
 import com.jaagro.report.api.dto.OrderReportDto;
 import com.jaagro.report.api.dto.ReportTaskDto;
+import com.jaagro.report.api.dto.WaybillFeeReportDto;
 import com.jaagro.report.api.service.DriverReportTaskService;
 import com.jaagro.report.api.service.OrderReportService;
+import com.jaagro.report.api.service.WaybillFeeReportTaskService;
 import com.jaagro.report.biz.config.RabbitMqConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +30,24 @@ import java.util.Date;
 public class ReportTaskConsumeService {
     @Autowired
     private DriverReportTaskService driverReportTaskService;
-
     @Autowired
     private OrderReportService orderReportService;
+    @Autowired
+    private WaybillFeeReportTaskService waybillFeeReportTaskService;
+
 
     @RabbitListener(queues = RabbitMqConfig.REPORT_SEND_QUEUE)
-    private void consumeTask(ReportTaskDto reportTaskDto){
+    private void consumeTask(ReportTaskDto reportTaskDto) {
         SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat month = new SimpleDateFormat("yyyy-MM");
-        if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())){
-            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())){
-                driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(),-1)));
+        if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())) {
+            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
+                driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(), -1)));
             }
-            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())){
-                driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(),-1)));
+            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())) {
+                driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(), -1)));
             }
-        }else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())){
+        } else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())) {
 
         } else if (ReportTaskType.ORDER.equals(reportTaskDto.getTaskType())) {
             if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
@@ -58,8 +63,15 @@ public class ReportTaskConsumeService {
                 orderReportService.createMonthlyReport(orderReportDto);
             }
 
-        }else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())){
+        } else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())) {
 
+            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
+                String dayString = day.format(DateUtils.addDays(new Date(), -1));
+                waybillFeeReportTaskService.createDailyReport(dayString);
+            }
+            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())) {
+                month.format(DateUtils.addDays(new Date(), -1));
+            }
         }
     }
 }
