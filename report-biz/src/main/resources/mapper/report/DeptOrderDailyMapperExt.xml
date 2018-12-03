@@ -81,6 +81,4 @@
         </where>
         ) T_OrderDailyReport group by reportTime,goodsType
     </select>
-
-
 </mapper>

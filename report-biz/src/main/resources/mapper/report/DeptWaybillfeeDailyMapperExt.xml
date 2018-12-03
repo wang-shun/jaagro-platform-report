@@ -19,8 +19,53 @@
             #{item.modifyTime})
         </foreach>
     </insert>
-    <delete id="batchDeleteWaybillFeeDailyByDay" parameterType="java.lang.Integer">
+    <delete id="batchDeleteWaybillFeeDailyByDay" parameterType="java.lang.String">
          delete from dept_waybillfee_daily
          where report_time = #{day,jdbcType=INTEGER}
-  </delete>
+    </delete>
+    <select id="listWaybillFeeStatisticsByMonth" resultType="com.jaagro.report.api.entity.DeptWaybillfeeMonthly"
+            parameterType="java.lang.String">
+        SELECT
+        date_format(report_time, '%Y-%m') reportTime,
+        department_id departmentId,
+        goods_type goodsType,
+        sum(total_waybill_quantity) totalWaybillQuantity,
+        sum(anomaly_waybill_quantity) anomalyWaybillQuantity,
+        sum(goods_quantity) goodsQuantity,
+        sum(goods_weight) goodsWeight,
+        sum(income_customer_fee) incomeCustomerFee,
+        sum(income_anomaly_fee) incomeAnomalyFee,
+        sum(expend_freight) expendFreight,
+        sum(expend_anomaly_fee) expendAnomalyFee,
+        sum(gross_profit) grossProfit,
+        sum(gross_profit_rate) grossProfitRate
+        FROM dept_waybillfee_daily
+        <if test="month!=null">
+            where date_format(report_time, '%Y-%m')=#{month}
+        </if>
+        GROUP BY reportTime, department_id, goods_type
+    </select>
+
+    <select id="listWaybillFeeDailyReport" resultType="com.jaagro.report.api.entity.DeptWaybillfeeDaily"
+            parameterType="com.jaagro.report.api.dto.WaybillFeeReportDto">
+        SELECT report_time, department_id, goods_type, total_waybill_quantity,
+        anomaly_waybill_quantity,goods_quantity, goods_weight, income_customer_fee,
+        income_anomaly_fee, expend_freight, expend_anomaly_fee, gross_profit, gross_profit_rate
+        FROM dept_waybillfee_daily
+        <where>
+            1=1
+            <if test="reportTime != null and reportTime.length()>0">
+                and report_time=#{reportTime}
+            </if>
+            <if test="departIds!=null and departIds.size()>0">
+                and department_id in
+                <foreach collection="departIds" open="(" separator="," close=")" item="did">
+                    ${did}
+                </foreach>
+            </if>
+            <if test="goodsType != null">
+                and goods_type = #{goodsType}
+            </if>
+        </where>
+    </select>
 </mapper>
