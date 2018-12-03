@@ -32,7 +32,7 @@
         <!-- 生成的java bean包路径
         targetProject：目标工程
         -->
-        <javaModelGenerator targetPackage="com.jaagro.report.biz.entity"
+        <javaModelGenerator targetPackage="com.jaagro.report.api.entity"
                             targetProject="/Users/tony/Documents/jaagro_repository/jaagro-platform-report/report-biz/src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>

@@ -1,5 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.DeptOrderDailyMapperExt" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.DeptOrderDailyMapperExt">
 
+    <delete id="batchDelete">
+        delete from dept_order_daily
+        <where>
+            <if test="reportTime != null and reportTime.length()>0">report_time=#{reportTime}</if>
+        </where>
+    </delete>
+
+    <insert id="batchInsert" parameterType="com.jaagro.report.api.entity.DeptOrderDaily">
+        insert into dept_order_daily (report_time,
+        department_id, goods_type, total_order_quantity,
+        total_waybill_quantity, complete_waybill_quantity,
+        anomaly_waybill_quantity, refuse_waybill_quantity,
+        goods_quantity, goods_weight)
+        VALUES
+        <foreach collection="list" item="line" separator=",">
+            (#{line.reportTime,jdbcType=VARCHAR},
+            #{line.departmentId,jdbcType=INTEGER}, #{line.goodsType,jdbcType=INTEGER},
+            #{line.totalOrderQuantity,jdbcType=INTEGER},
+            #{line.totalWaybillQuantity,jdbcType=INTEGER}, #{line.completeWaybillQuantity,jdbcType=INTEGER},
+            #{line.anomalyWaybillQuantity,jdbcType=INTEGER}, #{line.refuseWaybillQuantity,jdbcType=INTEGER},
+            #{line.goodsQuantity,jdbcType=INTEGER}, #{line.goodsWeight,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+
+    <select id="getOrderMonthlyDataFromOrderDaily" parameterType="com.jaagro.report.api.dto.OrderReportDto"
+            resultType="com.jaagro.report.api.entity.DeptOrderMonthly">
+        select left(report_time, 7) as reportTime,department_id as departmentId,goods_type as goodsType,
+        sum(total_order_quantity) as totalOrderQuantity,
+        sum(total_waybill_quantity) as totalWaybillQuantity,
+        sum(complete_waybill_quantity) as completeWaybillQuantity,
+        sum(anomaly_waybill_quantity) as anomalyWaybillQuantity,
+        sum(refuse_waybill_quantity) as refuseWaybillQuantity,
+        sum(goods_quantity) as goodsQuantity,
+        sum(goods_weight) as goodsWeight
+        from dept_order_daily
+        <where>
+            1=1
+            <if test="reportTime != null and reportTime.length()>0">and left(report_time, 7)=#{reportTime}</if>
+            <if test="departIds!=null and departIds.size()>0">
+                and dept in
+                <foreach collection="departIds" open="(" separator="," close=")" item="did">
+                    ${did}
+                </foreach>
+            </if>
+            <if test="goodsType != null">and goods_type = #{goodsType}</if>
+        </where>
+        group by reportTime,departmentId,goodsType
+    </select>
+
+    <select id="listOrderDailyReport" parameterType="com.jaagro.report.api.dto.OrderReportDto"
+            resultType="com.jaagro.report.api.entity.DeptOrderDaily">
+        select *
+        from dept_order_daily
+        <where>
+            1=1
+            <if test="reportTime != null and reportTime.length()>0">and report_time=#{reportTime}</if>
+            <if test="departIds!=null and departIds.size()>0">
+                and department_id in
+                <foreach collection="departIds" open="(" separator="," close=")" item="did">
+                    ${did}
+                </foreach>
+            </if>
+            <if test="goodsType != null">and goods_type = #{goodsType}</if>
+        </where>
+
+    </select>
+
+    <select id="listOrderDailyReport_test" parameterType="com.jaagro.report.api.dto.OrderReportDto"
+            resultType="com.jaagro.report.api.entity.DeptOrderDaily">
+        select report_time as reportTime,
+        goods_type as goodsType,
+        sum(total_order_quantity) as totalOrderQuantity,
+        sum(total_waybill_quantity) as totalWaybillQuantity,
+        sum(complete_waybill_quantity) as completeWaybillQuantity,
+        sum(anomaly_waybill_quantity) as anomalyWaybillQuantity,
+        sum(refuse_waybill_quantity) as refuseWaybillQuantity,
+        sum(goods_quantity) as goodsQuantity,
+        sum(goods_weight) as goodsWeight
+        from(
+        select
+        report_time,goods_type,total_order_quantity,total_waybill_quantity,complete_waybill_quantity,anomaly_waybill_quantity,
+        refuse_waybill_quantity,goods_quantity,goods_weight
+        from dept_order_daily
+        -- where 1=1 and report_time ='20181012' and goods_type=2 and department_id in(1,121)
+        <where>
+            1=1
+            <if test="reportTime != null and reportTime.length()>0">and report_time=#{reportTime}</if>
+            <if test="departIds!=null and departIds.size()>0">
+                and department_id in
+                <foreach collection="departIds" open="(" separator="," close=")" item="did">
+                    ${did}
+                </foreach>
+            </if>
+            <if test="goodsType != null">and goods_type = #{goodsType}</if>
+        </where>
+        ) T_OrderDailyReport group by reportTime,goodsType
+    </select>
 </mapper>
