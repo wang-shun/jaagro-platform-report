@@ -53,6 +53,24 @@
 
     <select id="listOrderDailyReport" parameterType="com.jaagro.report.api.dto.OrderReportDto"
             resultType="com.jaagro.report.api.entity.DeptOrderDaily">
+        select *
+        from dept_order_daily
+        <where>
+            1=1
+            <if test="reportTime != null and reportTime.length()>0">and report_time=#{reportTime}</if>
+            <if test="departIds!=null and departIds.size()>0">
+                and department_id in
+                <foreach collection="departIds" open="(" separator="," close=")" item="did">
+                    ${did}
+                </foreach>
+            </if>
+            <if test="goodsType != null">and goods_type = #{goodsType}</if>
+        </where>
+
+    </select>
+
+    <select id="listOrderDailyReport_test" parameterType="com.jaagro.report.api.dto.OrderReportDto"
+            resultType="com.jaagro.report.api.entity.DeptOrderDaily">
         select report_time as reportTime,
         goods_type as goodsType,
         sum(total_order_quantity) as totalOrderQuantity,

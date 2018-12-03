@@ -27,19 +27,9 @@
     <select id="listOrderMonthlyReport" parameterType="com.jaagro.report.api.dto.OrderReportDto"
             resultType="com.jaagro.report.api.entity.DeptOrderMonthly">
 
-        select report_time as reportTime,
-        goods_type as goodsType,
-        sum(total_order_quantity) as totalOrderQuantity,
-        sum(total_waybill_quantity) as totalWaybillQuantity,
-        sum(complete_waybill_quantity) as completeWaybillQuantity,
-        sum(anomaly_waybill_quantity) as anomalyWaybillQuantity,
-        sum(refuse_waybill_quantity) as refuseWaybillQuantity,
-        sum(goods_quantity) as goodsQuantity,
-        sum(goods_weight) as goodsWeight
-        from(
+
         select
-        report_time,goods_type,total_order_quantity,total_waybill_quantity,complete_waybill_quantity,anomaly_waybill_quantity,
-        refuse_waybill_quantity,goods_quantity,goods_weight
+          *
         from dept_order_monthly
         <where>
             1=1
@@ -52,7 +42,6 @@
             </if>
             <if test="goodsType != null">and goods_type = #{goodsType}</if>
         </where>
-        ) T_OrderMonthlyReport group by reportTime,goodsType
 
     </select>
 

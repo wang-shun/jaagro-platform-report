@@ -6,4 +6,4 @@ feignClient:
   application:
     crm: crm
     tms: tms
-    user: uaa
+    user: user

@@ -29,6 +29,7 @@
     </insert>
     <select id="listByBeginTimeAndEndTime" resultType="com.jaagro.report.api.entity.DriverOrderMonthly">
         SELECT
+          SUBSTR(report_time, 1, 7) as report_time,
 	      driver_id,
 	      driver_name,
 	      truck_id,
@@ -49,13 +50,14 @@
 	      driver_order_daily
         WHERE
           enabled = 1
-          AND report_time BETWEEN '2018-11'
-          AND '2018-12'
+          AND report_time BETWEEN #{beginMonth}
+          AND #{endMonth}
         GROUP BY
 	      driver_id,
 	      driver_name,
 	      truck_id,
-	      truck_number
+	      truck_number,
+	      SUBSTR(report_time, 1, 7)
     </select>
     <select id="listByCriteria" resultType="com.jaagro.report.api.entity.DriverOrderDaily" parameterType="com.jaagro.report.api.dto.ListDriverReportCriteriaDto">
         SELECT

@@ -1,5 +1,6 @@
 package com.jaagro.report.biz.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.jaagro.report.api.dto.DriverReturnDto;
 import com.jaagro.report.api.dto.TruckDto;
 import com.jaagro.report.api.entity.DriverOrderDaily;
@@ -69,7 +70,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param day yyyy-MM-dd
      */
     @Override
-    @Async("reportExecutor-")
+    @Async("reportExecutor")
     public void createDailyReportAsync(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -80,7 +81,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param month yyyy-MM
      */
     @Override
-    @Async("reportExecutor-")
+    @Async("reportExecutor")
     public void createMonthlyReportAsync(String month) {
         createDriverOrderMonthlyReport(month);
     }
@@ -136,6 +137,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
             List<DriverOrderMonthly> driverOrderMonthlyList = driverOrderDailyMapperExt.listByBeginTimeAndEndTime(month, endMonth);
+            log.info("driverOrderMonthlyList={}",JSON.toJSONString(driverOrderMonthlyList));
             if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
                 // 物理删除原有日报表
                 driverOrderMonthlyMapperExt.deleteByReportTime(month);
@@ -155,7 +157,13 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                         .setCreateTime(new Date())
                         .setEnabled(true)
                         .setReportTime(day)
-                        .setDriverId(driverId);
+                        .setDriverId(driverId)
+                        .setLoadPunctualityRate(new BigDecimal("0"))
+                        .setCompleteWaybillQuantity(0)
+                        .setAnomalyWaybillQuantity(0)
+                        .setReceiveWaybillQuantity(0)
+                        .setAnomalyCost(new BigDecimal("0"))
+                        .setRefuseWaybillQuantity(0);
                 if (driverOrderDailySet != null) {
                     driverOrderDailySet.add(orderDaily);
                 }
@@ -204,7 +212,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 if (!CollectionUtils.isEmpty(subList)) {
                     for (HashMap<String, Object> result : subList) {
                         if (!result.isEmpty() && result.get("driver_id") != null) {
-                            driverIdSet.add((Integer) result.get("driver_id"));
+                            driverIdSet.add(Integer.valueOf(result.get("driver_id").toString()));
                         }
                     }
                 }
@@ -219,10 +227,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> recAndRef : recAndRefList) {
                     if (!CollectionUtils.isEmpty(recAndRef)) {
                         if (recAndRef.get("receive_waybill_quantity") != null) {
-                            orderDaily.setReceiveWaybillQuantity((Integer) recAndRef.get("receive_waybill_quantity"));
+                            orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("receive_waybill_quantity").toString()));
                         }
                         if (recAndRef.get("refuse_waybill_quantity") != null) {
-                            orderDaily.setReceiveWaybillQuantity((Integer) recAndRef.get("refuse_waybill_quantity"));
+                            orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
                         }
                     }
                 }
@@ -236,7 +244,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> anomalyCost : anomalyCostList) {
                     if (!CollectionUtils.isEmpty(anomalyCost)) {
                         if (anomalyCost.get("anomaly_cost") != null) {
-                            orderDaily.setAnomalyCost((BigDecimal) anomalyCost.get("anomaly_cost"));
+                            orderDaily.setAnomalyCost(new BigDecimal(anomalyCost.get("anomaly_cost").toString()));
                         }
                     }
                 }
@@ -250,7 +258,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> anomalyCount : anomalyCountList) {
                     if (!CollectionUtils.isEmpty(anomalyCount)) {
                         if (anomalyCount.get("anomaly_waybill_quantity") != null) {
-                            orderDaily.setAnomalyWaybillQuantity((Integer) anomalyCount.get("anomaly_waybill_quantity"));
+                            orderDaily.setAnomalyWaybillQuantity(Integer.valueOf(anomalyCount.get("anomaly_waybill_quantity").toString()));
                         }
                     }
                 }
@@ -264,8 +272,8 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> avgRecDuration : avgRecDurationList) {
                     if (!CollectionUtils.isEmpty(avgRecDuration)) {
                         if (avgRecDuration.get("avg_receive_duration") != null) {
-                            BigDecimal avgReceiveDuration = (BigDecimal) avgRecDuration.get("avg_receive_duration");
-                            orderDaily.setAvgReceiveDuration(avgReceiveDuration.divide(new BigDecimal(60), 2, BigDecimal.ROUND_HALF_UP));
+                            BigDecimal avgReceiveDuration = new BigDecimal(avgRecDuration.get("avg_receive_duration").toString());
+                            orderDaily.setAvgReceiveDuration(avgReceiveDuration.divide(new BigDecimal("60"), 2, BigDecimal.ROUND_HALF_UP));
                         }
                     }
                 }
@@ -279,7 +287,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> completeCount : completeCountList) {
                     if (!CollectionUtils.isEmpty(completeCount)) {
                         if (completeCount.get("complete_waybill_quantity") != null) {
-                            orderDaily.setCompleteWaybillQuantity((Integer) completeCount.get("complete_waybill_quantity"));
+                            orderDaily.setCompleteWaybillQuantity(Integer.valueOf(completeCount.get("complete_waybill_quantity").toString()));
                         }
                     }
                 }
@@ -293,9 +301,13 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                 for (HashMap<String, Object> loadTotalAndPunctuality : loadTotalAndPunctualityList) {
                     if (!CollectionUtils.isEmpty(loadTotalAndPunctuality)) {
                         if (loadTotalAndPunctuality.get("total") != null && loadTotalAndPunctuality.get("punctuality") != null) {
-                            Integer total = (Integer) loadTotalAndPunctuality.get("total");
-                            Integer punctuality = (Integer) loadTotalAndPunctuality.get("punctuality");
-                            orderDaily.setLoadPunctualityRate(new BigDecimal(punctuality.toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
+                            String total = loadTotalAndPunctuality.get("total").toString();
+                            if (!total.equals("0")){
+                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("total").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
+                            }else{
+                                orderDaily.setLoadPunctualityRate(new BigDecimal("0"));
+                            }
+
                         }
                     }
                 }
