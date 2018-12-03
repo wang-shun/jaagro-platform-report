@@ -26,8 +26,10 @@ public class Test {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println(sdf.format(date));
     }
+
     @GetMapping("/test1")
     public void test1() {
-      waybillFeeReportTaskService.createDailyReport(null);
+        //waybillFeeReportTaskService.createDailyReport(null);
+        waybillFeeReportTaskService.createMonthlyReport(null);
     }
 }
