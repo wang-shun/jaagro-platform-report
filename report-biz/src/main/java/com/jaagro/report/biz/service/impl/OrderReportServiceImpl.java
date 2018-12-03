@@ -1,5 +1,6 @@
 package com.jaagro.report.biz.service.impl;
 
+import com.jaagro.report.api.dto.DepartmentReturnDto;
 import com.jaagro.report.api.dto.OrderReportDto;
 import com.jaagro.report.api.entity.DeptOrderDaily;
 import com.jaagro.report.api.entity.DeptOrderMonthly;
@@ -7,6 +8,8 @@ import com.jaagro.report.api.service.OrderReportService;
 import com.jaagro.report.biz.mapper.report.DeptOrderDailyMapperExt;
 import com.jaagro.report.biz.mapper.report.DeptOrderMonthlyMapperExt;
 import com.jaagro.report.biz.mapper.tms.OrderReportMapperExt;
+import com.jaagro.report.biz.service.UserClientService;
+import com.jaagro.utils.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单报表实现类
@@ -24,6 +28,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrderReportServiceImpl implements OrderReportService {
+
+    @Autowired
+    private UserClientService userClientService;
 
     @Autowired
     private DeptOrderDailyMapperExt deptOrderDailyMapperExt;
@@ -76,7 +83,8 @@ public class OrderReportServiceImpl implements OrderReportService {
 
     @Override
     public List<DeptOrderDaily> getDeptOrderDailyDataListFromTms(OrderReportDto orderReportDto) {
-        return orderReportMapperExt.getDeptOrderDailyDataListFromTms(orderReportDto);
+        List<DeptOrderDaily> orderDailyList = orderReportMapperExt.getDeptOrderDailyDataListFromTms(orderReportDto);
+        return orderDailyList;
     }
 
     /**
@@ -93,11 +101,43 @@ public class OrderReportServiceImpl implements OrderReportService {
 
     @Override
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
-        return deptOrderDailyMapperExt.listOrderDailyReport(dto);
+        if (null != dto.getDeptId()) {
+            List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
+            if (!CollectionUtils.isEmpty(deptIds)) {
+                dto.setDepartIds(deptIds);
+            }
+        }
+        List<DeptOrderDaily> orderDailyList = deptOrderDailyMapperExt.listOrderDailyReport(dto);
+        if (!CollectionUtils.isEmpty(orderDailyList)) {
+            List<DepartmentReturnDto> departmentReturnDtos = userClientService.getAllDepartments();
+            for (DeptOrderDaily deptOrderDaily : orderDailyList) {
+                DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderDaily.getDepartmentId())).collect(Collectors.toList()).get(0);
+                if (null != departmentReturnDto) {
+                    deptOrderDaily.setDepartmentName(departmentReturnDto.getDepartmentName());
+                }
+            }
+        }
+        return orderDailyList;
     }
 
     @Override
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
-        return deptOrderMonthlyMapperExt.listOrderMonthlyReport(dto);
+        if (null != dto.getDeptId()) {
+            List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
+            if (!CollectionUtils.isEmpty(deptIds)) {
+                dto.setDepartIds(deptIds);
+            }
+        }
+        List<DeptOrderMonthly> orderMonthlyList = deptOrderMonthlyMapperExt.listOrderMonthlyReport(dto);
+        if (!CollectionUtils.isEmpty(orderMonthlyList)) {
+            List<DepartmentReturnDto> departmentReturnDtos = userClientService.getAllDepartments();
+            for (DeptOrderMonthly deptOrderMonthly : orderMonthlyList) {
+                DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderMonthly.getDepartmentId())).collect(Collectors.toList()).get(0);
+                if (null != departmentReturnDto) {
+                    deptOrderMonthly.setDepartmentName(departmentReturnDto.getDepartmentName());
+                }
+            }
+        }
+        return orderMonthlyList;
     }
 }
