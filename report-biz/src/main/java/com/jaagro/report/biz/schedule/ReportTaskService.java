@@ -59,8 +59,7 @@ public class ReportTaskService {
     /**
      * 将订单数据日报表任务塞入mq队列
      */
-//    @Scheduled(cron = "0 0 3 * * ?")
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     public void deptOrderDailyReportTaskToQueue() {
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.DAILY));
     }
@@ -69,8 +68,7 @@ public class ReportTaskService {
      * 将订单数据月日报表任务塞入mq队列
      */
 
-//    @Scheduled(cron = "0 30 3 * * ?")
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 30 3 * * ?")
     public void deptOrderMonthlyReportTaskToQueue() {
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.MONTHLY));
     }
