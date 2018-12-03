@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.jaagro.report.biz.config.RabbitMqConfig.REPORT_SEND_QUEUE;
 import static com.jaagro.report.biz.config.RabbitMqConfig.TOPIC_EXCHANGE;
 
 /**
@@ -21,6 +20,7 @@ import static com.jaagro.report.biz.config.RabbitMqConfig.TOPIC_EXCHANGE;
 @Service
 @Slf4j
 public class ReportTaskService {
+
     @Autowired
     private AmqpTemplate amqpTemplate;
 
@@ -59,7 +59,8 @@ public class ReportTaskService {
     /**
      * 将订单数据日报表任务塞入mq队列
      */
-    @Scheduled(cron = "0 0 3 * * ?")
+//    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void deptOrderDailyReportTaskToQueue() {
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.DAILY));
     }
@@ -67,7 +68,9 @@ public class ReportTaskService {
     /**
      * 将订单数据月日报表任务塞入mq队列
      */
-    @Scheduled(cron = "0 30 3 * * ?")
+
+//    @Scheduled(cron = "0 30 3 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void deptOrderMonthlyReportTaskToQueue() {
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.MONTHLY));
     }
@@ -89,7 +92,7 @@ public class ReportTaskService {
     }
 
     private void putToQueue(ReportTaskDto reportTaskDto) {
-        amqpTemplate.convertAndSend(TOPIC_EXCHANGE, REPORT_SEND_QUEUE, reportTaskDto);
+        amqpTemplate.convertAndSend(TOPIC_EXCHANGE, "report.send", reportTaskDto);
     }
 
 }

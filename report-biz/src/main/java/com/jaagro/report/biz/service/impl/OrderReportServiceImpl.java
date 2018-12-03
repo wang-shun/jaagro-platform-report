@@ -9,10 +9,13 @@ import com.jaagro.report.biz.mapper.report.DeptOrderDailyMapperExt;
 import com.jaagro.report.biz.mapper.report.DeptOrderMonthlyMapperExt;
 import com.jaagro.report.biz.mapper.tms.OrderReportMapperExt;
 import com.jaagro.report.biz.service.UserClientService;
-import com.jaagro.utils.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "orderReport")
 public class OrderReportServiceImpl implements OrderReportService {
 
     @Autowired
@@ -46,6 +50,8 @@ public class OrderReportServiceImpl implements OrderReportService {
      *
      * @param orderReportDto
      */
+    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createDailyReport(OrderReportDto orderReportDto) {
         String day = orderReportDto.getReportTime();
@@ -66,6 +72,8 @@ public class OrderReportServiceImpl implements OrderReportService {
      *
      * @param orderReportDto yyyyMM
      */
+    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createMonthlyReport(OrderReportDto orderReportDto) {
         String month = orderReportDto.getReportTime();
@@ -98,7 +106,7 @@ public class OrderReportServiceImpl implements OrderReportService {
         return deptOrderDailyMapperExt.getOrderMonthlyDataFromOrderDaily(orderReportDto);
     }
 
-
+    @Cacheable
     @Override
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
@@ -120,6 +128,7 @@ public class OrderReportServiceImpl implements OrderReportService {
         return orderDailyList;
     }
 
+    @Cacheable
     @Override
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
