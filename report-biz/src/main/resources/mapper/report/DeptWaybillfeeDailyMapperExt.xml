@@ -8,7 +8,6 @@
         income_customer_fee, income_anomaly_fee,
         expend_freight, expend_anomaly_fee,
         gross_profit, gross_profit_rate,
-        enabled, create_time,
         modify_time)
         values
         <foreach collection="deptWaybillfeeDailies" item="item" separator=",">
@@ -16,8 +15,8 @@
             #{item.departmentId}, #{item.goodsType}, #{item.totalWaybillQuantity},#{item.anomalyWaybillQuantity},
             #{item.goodsQuantity}, #{item.goodsWeight},#{item.incomeCustomerFee},
             #{item.incomeAnomalyFee},#{item.expendFreight},
-            #{item.expendAnomalyFee}, #{item.grossProfit}, #{item.grossProfitRate}, #{item.enabled},
-            #{item.createTime}, #{item.modifyTime})
+            #{item.expendAnomalyFee}, #{item.grossProfit}, #{item.grossProfitRate},
+            #{item.modifyTime})
         </foreach>
     </insert>
     <delete id="batchDeleteWaybillFeeDailyByDay" parameterType="java.lang.Integer">
