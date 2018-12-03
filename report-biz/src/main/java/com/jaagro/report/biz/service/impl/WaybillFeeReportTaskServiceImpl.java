@@ -12,6 +12,7 @@ import com.jaagro.report.biz.service.UserClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
      * @param day yyyy-MM-dd
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
         List<DeptWaybillfeeDaily> deptWaybillfeeDailies = waybillFeeReportMapper.listWaybillFeeStatisticsByDay(day);
         try {
@@ -64,6 +66,7 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
      * @param month yyyy-MM
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
         List<DeptWaybillfeeMonthly> deptWaybillfeeMonthlies = deptWaybillfeeDailyMapper.listWaybillFeeStatisticsByMonth("2018-10");
         if (!CollectionUtils.isEmpty(deptWaybillfeeMonthlies)) {
