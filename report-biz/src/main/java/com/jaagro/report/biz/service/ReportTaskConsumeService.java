@@ -4,7 +4,6 @@ import com.jaagro.report.api.constant.ReportDateType;
 import com.jaagro.report.api.constant.ReportTaskType;
 import com.jaagro.report.api.dto.OrderReportDto;
 import com.jaagro.report.api.dto.ReportTaskDto;
-import com.jaagro.report.api.dto.WaybillFeeReportDto;
 import com.jaagro.report.api.service.DriverReportTaskService;
 import com.jaagro.report.api.service.OrderReportService;
 import com.jaagro.report.api.service.WaybillFeeReportTaskService;
@@ -12,7 +11,6 @@ import com.jaagro.report.biz.config.RabbitMqConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -57,6 +57,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
+        log.info("createDailyReport begin day={}",day);
         createDriverOrderDailyReport(day);
     }
 
@@ -69,6 +70,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
+        log.info("createMonthlyReport begin month={}",month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -150,7 +152,6 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
             List<DriverOrderMonthly> driverOrderMonthlyList = driverOrderDailyMapperExt.listByBeginTimeAndEndTime(month, endMonth);
-            log.info("driverOrderMonthlyList={}", JSON.toJSONString(driverOrderMonthlyList));
             if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
                 // 物理删除原有日报表
                 driverOrderMonthlyMapperExt.deleteByReportTime(month);
