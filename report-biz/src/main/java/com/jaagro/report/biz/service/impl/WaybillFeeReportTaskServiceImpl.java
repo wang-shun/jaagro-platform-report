@@ -31,7 +31,7 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
      */
     @Override
     public void createDailyReport(String day) {
-        List<DeptWaybillfeeDaily> deptWaybillfeeDailies = waybillFeeReportMapper.listWaybillFeeStatisticsByDay("2018-11-20");
+        List<DeptWaybillfeeDaily> deptWaybillfeeDailies = waybillFeeReportMapper.listWaybillFeeStatisticsByDay(day);
         try {
             deptWaybillfeeDailyMapper.batchWaybillFeeDailyInsert(deptWaybillfeeDailies);
         } catch (Exception e) {
