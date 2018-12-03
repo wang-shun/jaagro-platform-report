@@ -53,7 +53,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param day yyyy-MM-dd
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
+    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     public void createDailyReport(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -64,7 +64,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param month yyyy-MM
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
+    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     public void createMonthlyReport(String month) {
         createDriverOrderMonthlyReport(month);
     }
@@ -76,7 +76,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
+    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     public void createDailyReportAsync(String day) {
         createDriverOrderDailyReport(day);
     }
@@ -88,7 +88,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport",allEntries = true)
+    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     public void createMonthlyReportAsync(String month) {
         createDriverOrderMonthlyReport(month);
     }
