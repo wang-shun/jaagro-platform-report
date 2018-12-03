@@ -29,7 +29,7 @@ public class WaybillFeeReportController {
     }
 
     @ApiOperation(value = "生成运单费用月报表")
-    @PostMapping("/createWaybillFeeDailyReport/{month}")
+    @PostMapping("/createWaybillFeeMonthReport/{month}")
     public BaseResponse createWaybillFeeMonthReport(@PathVariable String month) {
         waybillFeeReportTaskService.createMonthlyReport(month);
         return BaseResponse.successInstance(ResponseStatusCode.OPERATION_SUCCESS);
