@@ -32,17 +32,17 @@ public class ReportTaskConsumeService {
     private OrderReportService orderReportService;
 
     @RabbitListener(queues = RabbitMqConfig.REPORT_SEND_QUEUE)
-    private void consumeTask(ReportTaskDto reportTaskDto) {
+    private void consumeTask(ReportTaskDto reportTaskDto){
         SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat month = new SimpleDateFormat("yyyy-MM");
-        if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())) {
-            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
-                driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(), -1)));
+        if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())){
+            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())){
+                driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(),-1)));
             }
-            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())) {
-                driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(), -1)));
+            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())){
+                driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(),-1)));
             }
-        } else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())) {
+        }else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())){
 
         } else if (ReportTaskType.ORDER.equals(reportTaskDto.getTaskType())) {
             if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
@@ -58,7 +58,7 @@ public class ReportTaskConsumeService {
                 orderReportService.createMonthlyReport(orderReportDto);
             }
 
-        } else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())) {
+        }else if (ReportTaskType.WAYBILL_FEE.equals(reportTaskDto.getTaskType())){
 
         }
     }

@@ -27,4 +27,47 @@
             #{item.modifyTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
+    <select id="listByBeginTimeAndEndTime" resultType="com.jaagro.report.api.entity.DriverOrderMonthly">
+        SELECT
+	      driver_id,
+	      driver_name,
+	      truck_id,
+	      truck_number,
+	      SUM(CASE WHEN mileage IS NULL THEN 0 ELSE mileage END) AS mileage,
+	      SUM(receive_waybill_quantity) AS receive_waybill_quantity,
+          SUM(refuse_waybill_quantity) AS refuse_waybill_quantity,
+	      SUM(anomaly_waybill_quantity) AS anomaly_waybill_quantity,
+          SUM(complete_waybill_quantity) AS complete_waybill_quantity,
+          AVG(avg_receive_duration) AS avg_receive_duration,
+          AVG(load_punctuality_rate) AS load_punctuality_rate,
+          AVG(CASE WHEN unload_punctuality_rate IS NULL THEN 0 ELSE unload_punctuality_rate END)
+          AS unload_punctuality_rate,
+          SUM(CASE WHEN freight IS NULL THEN 0 ELSE freight END) AS freight,
+          SUM(anomaly_cost) AS anomaly_cost,
+          SUM(CASE WHEN total_cost IS NULL THEN 0 ELSE total_cost END) AS total_cost
+        FROM
+	      driver_order_daily
+        WHERE
+          enabled = 1
+          AND report_time BETWEEN '2018-11'
+          AND '2018-12'
+        GROUP BY
+	      driver_id,
+	      driver_name,
+	      truck_id,
+	      truck_number
+    </select>
+    <select id="listByCriteria" resultType="com.jaagro.report.api.entity.DriverOrderDaily" parameterType="com.jaagro.report.api.dto.ListDriverReportCriteriaDto">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM driver_order_daily
+        WHERE
+        1 = 1
+        <if test="reportTime != null and reportTime != ''">
+            AND report_time = #{reportTime}
+        </if>
+        <if test="truckNumber != null and truckNumber !=''">
+            <![CDATA[and (truck_number like concat(#{truckNumber},'%') )]]>
+        </if>
+    </select>
 </mapper>

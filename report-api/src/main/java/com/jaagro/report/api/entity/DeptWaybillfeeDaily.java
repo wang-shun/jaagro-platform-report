@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class DeptWaybillfeeDaily implements Serializable{
+public class DeptWaybillfeeDaily implements Serializable {
     /**
      * 运单费用报表id
      */
