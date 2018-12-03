@@ -1,6 +1,6 @@
 package com.jaagro.report.biz.mapper.report;
 
-import com.jaagro.report.api.entity.DeptOrderMonthly;
+import com.jaagro.report.api.entity.DeptOrderMonthly ;
 
 public interface DeptOrderMonthlyMapper {
     /**

@@ -20,7 +20,7 @@ public class DriverOrderMonthly implements Serializable{
     private Integer id;
 
     /**
-     * 统计时间(yyyy-mm-dd)
+     * 月份(yyyy-mm)
      */
     private String reportTime;
 
@@ -43,6 +43,11 @@ public class DriverOrderMonthly implements Serializable{
      * 车辆id
      */
     private Integer truckId;
+    /**
+     * 公里数
+     */
+    private BigDecimal mileage;
+
     /**
      * 公里数
      */
@@ -113,4 +118,26 @@ public class DriverOrderMonthly implements Serializable{
      */
     private Date modifyTime;
 
+    /**
+     * 重写hashcode和equals用于比较对象相等
+     *
+     * @return
+     * @author yj
+     */
+    @Override
+    public int hashCode() {
+        return driverId.hashCode() + reportTime.hashCode() + enabled.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        DriverOrderMonthly other = (DriverOrderMonthly) obj;
+        return other.driverId.equals(this.driverId) && other.reportTime.equals(this.reportTime) && other.enabled.equals(this.enabled);
+    }
 }

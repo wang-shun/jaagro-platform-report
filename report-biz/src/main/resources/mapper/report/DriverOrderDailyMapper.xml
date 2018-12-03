@@ -8,6 +8,7 @@
     <result column="driver_id" property="driverId" jdbcType="INTEGER" />
     <result column="truck_number" property="truckNumber" jdbcType="VARCHAR" />
     <result column="truck_id" property="truckId" jdbcType="INTEGER" />
+    <result column="mileage" property="mileage" jdbcType="DECIMAL" />
     <result column="receive_waybill_quantity" property="receiveWaybillQuantity" jdbcType="INTEGER" />
     <result column="refuse_waybill_quantity" property="refuseWaybillQuantity" jdbcType="INTEGER" />
     <result column="anomaly_waybill_quantity" property="anomalyWaybillQuantity" jdbcType="INTEGER" />
@@ -23,7 +24,7 @@
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, report_time, driver_name, driver_id, truck_number, truck_id, receive_waybill_quantity, 
+    id, report_time, driver_name, driver_id, truck_number, truck_id, mileage, receive_waybill_quantity,
     refuse_waybill_quantity, anomaly_waybill_quantity, complete_waybill_quantity, avg_receive_duration, 
     load_punctuality_rate, unload_punctuality_rate, freight, anomaly_cost, total_cost, 
     enabled, create_time, modify_time
@@ -41,7 +42,7 @@
   <insert id="insert" parameterType="com.jaagro.report.api.entity.DriverOrderDaily" useGeneratedKeys="true"
           keyProperty="id" keyColumn="id">
     insert into driver_order_daily (id, report_time, driver_name, 
-      driver_id, truck_number, truck_id, 
+      driver_id, truck_number, truck_id, mileage,
       receive_waybill_quantity, refuse_waybill_quantity, 
       anomaly_waybill_quantity, complete_waybill_quantity, 
       avg_receive_duration, load_punctuality_rate, 
@@ -49,7 +50,7 @@
       total_cost, enabled, create_time, 
       modify_time)
     values (#{id,jdbcType=INTEGER}, #{reportTime,jdbcType=VARCHAR}, #{driverName,jdbcType=VARCHAR}, 
-      #{driverId,jdbcType=INTEGER}, #{truckNumber,jdbcType=VARCHAR}, #{truckId,jdbcType=INTEGER}, 
+      #{driverId,jdbcType=INTEGER}, #{truckNumber,jdbcType=VARCHAR}, #{truckId,jdbcType=INTEGER},#{mileage,jdbcType=DECIMAL},
       #{receiveWaybillQuantity,jdbcType=INTEGER}, #{refuseWaybillQuantity,jdbcType=INTEGER}, 
       #{anomalyWaybillQuantity,jdbcType=INTEGER}, #{completeWaybillQuantity,jdbcType=INTEGER}, 
       #{avgReceiveDuration,jdbcType=DECIMAL}, #{loadPunctualityRate,jdbcType=DECIMAL}, 
@@ -78,6 +79,9 @@
       </if>
       <if test="truckId != null" >
         truck_id,
+      </if>
+      <if test="mileage != null" >
+        mileage,
       </if>
       <if test="receiveWaybillQuantity != null" >
         receive_waybill_quantity,
@@ -138,6 +142,9 @@
       <if test="truckId != null" >
         #{truckId,jdbcType=INTEGER},
       </if>
+      <if test="mileage != null" >
+        #{mileage,jdbcType=DECIMAL},
+      </if>
       <if test="receiveWaybillQuantity != null" >
         #{receiveWaybillQuantity,jdbcType=INTEGER},
       </if>
@@ -197,6 +204,9 @@
       <if test="truckId != null" >
         truck_id = #{truckId,jdbcType=INTEGER},
       </if>
+      <if test="mileage != null" >
+        truck_id = #{mileage,jdbcType=DECIMAL},
+      </if>
       <if test="receiveWaybillQuantity != null" >
         receive_waybill_quantity = #{receiveWaybillQuantity,jdbcType=INTEGER},
       </if>
@@ -246,6 +256,7 @@
       driver_id = #{driverId,jdbcType=INTEGER},
       truck_number = #{truckNumber,jdbcType=VARCHAR},
       truck_id = #{truckId,jdbcType=INTEGER},
+      mileage = #{mileage,jdbcType=DECIMAL},
       receive_waybill_quantity = #{receiveWaybillQuantity,jdbcType=INTEGER},
       refuse_waybill_quantity = #{refuseWaybillQuantity,jdbcType=INTEGER},
       anomaly_waybill_quantity = #{anomalyWaybillQuantity,jdbcType=INTEGER},
