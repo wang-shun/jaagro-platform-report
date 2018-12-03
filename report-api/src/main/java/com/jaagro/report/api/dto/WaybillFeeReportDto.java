@@ -18,6 +18,11 @@ public class WaybillFeeReportDto {
     private String reportTime;
 
     /**
+     * 网点id
+     */
+    private Integer deptId;
+
+    /**
      * 部门id
      */
     private List<Integer> departIds;
