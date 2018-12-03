@@ -54,4 +54,5 @@ public interface DriverReportMapperExt {
      * @return driver_id,anomaly_cost
      */
     List<HashMap<String,Object>> listAnomalyCost(@Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
+
 }

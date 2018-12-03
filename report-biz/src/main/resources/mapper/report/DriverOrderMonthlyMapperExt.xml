@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderMonthlyMapperExt" >
-
+    <delete id="deleteByReportTime">
+        DELETE
+        FROM driver_order_monthly
+        WHERE report_time = #{reportTime}
+    </delete>
 </mapper>
