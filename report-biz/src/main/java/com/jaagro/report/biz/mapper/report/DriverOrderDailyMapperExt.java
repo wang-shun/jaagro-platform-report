@@ -37,5 +37,5 @@ public interface DriverOrderDailyMapperExt extends DriverOrderDailyMapper {
      * @param listDriverReportCriteriaDto
      * @return
      */
-    List<DriverOrderDaily> listByCriteria(@Param("listDriverReportCriteriaDto") ListDriverReportCriteriaDto listDriverReportCriteriaDto);
+    List<DriverOrderDaily> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto);
 }

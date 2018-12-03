@@ -30,5 +30,5 @@ public interface DriverOrderMonthlyMapperExt extends DriverOrderMonthlyMapper {
      * @param listDriverReportCriteriaDto
      * @return
      */
-    List<DriverOrderMonthly> listByCriteria(@Param("listDriverReportCriteriaDto") ListDriverReportCriteriaDto listDriverReportCriteriaDto);
+    List<DriverOrderMonthly> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto);
 }
