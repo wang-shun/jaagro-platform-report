@@ -56,7 +56,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
-        log.info("O-createDailyReport-day={}", day);
+        log.info("O createDailyReport day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -69,7 +69,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
-        log.info("O-createMonthlyReport-month={}", month);
+        log.info("O createMonthlyReport month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -83,7 +83,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(String day) {
-        log.info("O-createDailyReportAsync-day={}", day);
+        log.info("O createDailyReportAsync day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -97,7 +97,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(String month) {
-        log.info("O-createMonthlyReportAsync-month={}", month);
+        log.info("O createMonthlyReportAsync month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
