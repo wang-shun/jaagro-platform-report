@@ -27,7 +27,7 @@ public class ReportTaskService {
     /**
      * 将司机日报表任务塞入mq队列
      */
-    @Scheduled(cron = "0/20 * * * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void driverDailyReportTaskToQueue() {
         log.info("S-driverDailyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.DRIVER, ReportDateType.DAILY);
         putToQueue(new ReportTaskDto(ReportTaskType.DRIVER, ReportDateType.DAILY));
