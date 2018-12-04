@@ -22,7 +22,7 @@
          ON t.waybill_id = w.id
          WHERE t.enabled = 1
          AND t.audit_status = '已通过'
-         AND t.create_time BETWEEN #{beginDate} AND #{endDate}
+         AND t.audit_time BETWEEN #{beginDate} AND #{endDate}
          AND w.driver_id IS NOT NULL
          GROUP BY w.driver_id
     </select>
@@ -67,7 +67,7 @@
         ( CASE WHEN wt.create_time &lt; w.load_time
         THEN 1 ELSE 0 END ) AS punctuality
         FROM waybill w
-        INNER JOIN waybill_tracking wt
+        LEFT JOIN waybill_tracking wt
         ON w.id = wt.waybill_id
         AND w.driver_id = wt.driver_id
         WHERE wt.new_status = '待装货'
