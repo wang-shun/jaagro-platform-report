@@ -1,4 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt">
+    <delete id="deleteByReportTime">
+        DELETE from customer_order_daily
+        WHERE report_time = #{reportTime}
+    </delete>
+    <insert id="batchInsert" parameterType="com.jaagro.report.api.entity.CustomerOrderDaily">
+        insert into customer_order_daily (id, report_time, customer_id,
+        customer_name, order_quantity, waybill_quantity,
+        anomaly_waybill_quantity, goods_type, amount,
+        tonnage, income_freight, income_anomaly_cost,
+        expend_freight, expend_anomaly_cost, gross_profit,
+        gross_profit_rate, create_time, modify_time
+        )
+        values
+        <foreach collection="driverOrderDailyList" item="item" separator=",">
+            (#{id,jdbcType=INTEGER}, #{reportTime,jdbcType=VARCHAR}, #{customerId,jdbcType=INTEGER},
+            #{customerName,jdbcType=VARCHAR}, #{orderQuantity,jdbcType=INTEGER}, #{waybillQuantity,jdbcType=INTEGER},
+            #{anomalyWaybillQuantity,jdbcType=INTEGER}, #{goodsType,jdbcType=INTEGER}, #{amount,jdbcType=INTEGER},
+            #{tonnage,jdbcType=DECIMAL}, #{incomeFreight,jdbcType=DECIMAL}, #{incomeAnomalyCost,jdbcType=DECIMAL},
+            #{expendFreight,jdbcType=DECIMAL}, #{expendAnomalyCost,jdbcType=DECIMAL}, #{grossProfit,jdbcType=DECIMAL},
+            #{grossProfitRate,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <select id="listCustomerDailyByCriteria" parameterType="com.jaagro.report.api.dto.ListCustomerReportCriteriaDto">
+        SELECT
+        id,
+        report_time,
+        customer_id,
+        customer_name,
+        sum(order_quantity),
+        sum(waybill_quantity),
+        sum(anomaly_waybill_quantity),
+        goods_type,
+        sum(amount),
+        sum(tonnage),
+        sum(income_freight),
+        sum(income_anomaly_cost),
+        sum(expend_freight),
+        sum(expend_anomaly_cost),
+        sum(gross_profit),
+        create_time
+        FROM
+        customer_order_daily
+        WHERE 1=1
+        <if test="reportTime != null and reportTime != ''">
+            and report_time = #{reportTime}
+        </if>
+        <if test="customerName != null and customerName != ''">
+            <![CDATA[and (customer_name like concat(#{customerName},'%') )]]>
+        </if>
+        <if test="goodsType != null">
+            and goods_type = #{goodsType}
+        </if>
+        GROUP BY
+        customer_id,
+        goods_type,
+        report_time,
+        id
+    </select>
 </mapper>

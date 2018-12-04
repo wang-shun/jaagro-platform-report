@@ -24,7 +24,7 @@
             #{item.avgReceiveDuration,jdbcType=DECIMAL}, #{item.loadPunctualityRate,jdbcType=DECIMAL},
             #{item.unloadPunctualityRate,jdbcType=DECIMAL}, #{item.freight,jdbcType=DECIMAL}, #{item.anomalyCost,jdbcType=DECIMAL},
             #{item.totalCost,jdbcType=DECIMAL}, #{item.enabled,jdbcType=BIT}, #{item.createTime,jdbcType=TIMESTAMP},
-            #{item.modifyTime,jdbcType=TIMESTAMP})
+            #{item.msodifyTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
     <select id="listByBeginTimeAndEndTime" resultType="com.jaagro.report.api.entity.DriverOrderMonthly">

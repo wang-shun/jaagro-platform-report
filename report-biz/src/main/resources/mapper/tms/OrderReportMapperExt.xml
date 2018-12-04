@@ -82,7 +82,7 @@
                     FROM
                      waybill w
                      inner join orders o on w.order_id=o.id
-                    inner JOIN waybill_goods g ON w.id = g.waybill_id
+                     inner JOIN waybill_goods g ON w.id = g.waybill_id
                     where w.waybill_status='已完成'
                       group by createDate,dept,type,waybill_id
                 ) T_QuatityTotalWeightTotalStatistics group by createDate,dept,type
