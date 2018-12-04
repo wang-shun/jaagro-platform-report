@@ -34,18 +34,17 @@
 	      driver_name,
 	      truck_id,
 	      truck_number,
-	      SUM(CASE WHEN mileage IS NULL THEN 0 ELSE mileage END) AS mileage,
+	      SUM(mileage) AS mileage,
 	      SUM(receive_waybill_quantity) AS receive_waybill_quantity,
           SUM(refuse_waybill_quantity) AS refuse_waybill_quantity,
 	      SUM(anomaly_waybill_quantity) AS anomaly_waybill_quantity,
           SUM(complete_waybill_quantity) AS complete_waybill_quantity,
           AVG(avg_receive_duration) AS avg_receive_duration,
           AVG(load_punctuality_rate) AS load_punctuality_rate,
-          AVG(CASE WHEN unload_punctuality_rate IS NULL THEN 0 ELSE unload_punctuality_rate END)
-          AS unload_punctuality_rate,
-          SUM(CASE WHEN freight IS NULL THEN 0 ELSE freight END) AS freight,
+          AVG(unload_punctuality_rate) AS unload_punctuality_rate,
+          SUM(freight) AS freight,
           SUM(anomaly_cost) AS anomaly_cost,
-          SUM(CASE WHEN total_cost IS NULL THEN 0 ELSE total_cost END) AS total_cost
+          SUM(total_cost) AS total_cost
         FROM
 	      driver_order_daily
         WHERE
