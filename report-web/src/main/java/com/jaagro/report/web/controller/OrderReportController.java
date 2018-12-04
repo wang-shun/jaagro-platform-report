@@ -67,8 +67,8 @@ public class OrderReportController {
     }
 
     @ApiOperation("web查询订单月报表数据")
-    @PostMapping("/queryOrderMontlyReport")
-    public BaseResponse<DeptOrderMonthly> queryOrderMontlyReport(@RequestBody OrderReportDto orderReportDto) {
+    @PostMapping("/queryOrderMonthlyReport")
+    public BaseResponse<DeptOrderMonthly> queryOrderMonthlyReport(@RequestBody OrderReportDto orderReportDto) {
 
         List<DeptOrderMonthly> deptOrderMonthlyList = orderReportService.listOrderMonthlyReport(orderReportDto);
 

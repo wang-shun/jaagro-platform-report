@@ -1,6 +1,5 @@
 package com.jaagro.report.biz.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.jaagro.report.api.dto.DriverReturnDto;
 import com.jaagro.report.api.dto.TruckDto;
 import com.jaagro.report.api.entity.DriverOrderDaily;
@@ -20,6 +19,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -54,7 +54,9 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
+        log.info("O-createDailyReport-day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -65,7 +67,9 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
+        log.info("O-createMonthlyReport-month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -77,7 +81,9 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Override
     @Async("reportExecutor")
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(String day) {
+        log.info("O-createDailyReportAsync-day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -89,7 +95,9 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Override
     @Async("reportExecutor")
     @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(String month) {
+        log.info("O-createMonthlyReportAsync-month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -145,7 +153,6 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
             List<DriverOrderMonthly> driverOrderMonthlyList = driverOrderDailyMapperExt.listByBeginTimeAndEndTime(month, endMonth);
-            log.info("driverOrderMonthlyList={}", JSON.toJSONString(driverOrderMonthlyList));
             if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
                 // 物理删除原有日报表
                 driverOrderMonthlyMapperExt.deleteByReportTime(month);

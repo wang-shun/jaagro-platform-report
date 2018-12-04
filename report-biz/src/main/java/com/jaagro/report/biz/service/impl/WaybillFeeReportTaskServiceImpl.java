@@ -12,6 +12,7 @@ import com.jaagro.report.biz.service.UserClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -42,19 +43,14 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
      * @param day yyyy-MM-dd
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
         List<DeptWaybillfeeDaily> deptWaybillfeeDailies = waybillFeeReportMapper.listWaybillFeeStatisticsByDay(day);
-        try {
-            if (!CollectionUtils.isEmpty(deptWaybillfeeDailies)) {
-                //删除当天报表
-                deptWaybillfeeDailyMapper.batchDeleteWaybillFeeDailyByDay(day);
-                //插入最新日报表
-                deptWaybillfeeDailyMapper.batchWaybillFeeDailyInsert(deptWaybillfeeDailies);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("批量插入日报表失败={}", e);
-            throw e;
+        if (!CollectionUtils.isEmpty(deptWaybillfeeDailies)) {
+            //删除当天报表
+            deptWaybillfeeDailyMapper.batchDeleteWaybillFeeDailyByDay(day);
+            //插入最新日报表
+            deptWaybillfeeDailyMapper.batchWaybillFeeDailyInsert(deptWaybillfeeDailies);
         }
     }
 
@@ -64,19 +60,14 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
      * @param month yyyy-MM
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
         List<DeptWaybillfeeMonthly> deptWaybillfeeMonthlies = deptWaybillfeeDailyMapper.listWaybillFeeStatisticsByMonth("2018-10");
         if (!CollectionUtils.isEmpty(deptWaybillfeeMonthlies)) {
-            try {
-                //删除当月报表
-                deptWaybillfeeMonthlyMapper.batchDeleteWaybillFeeDailyByMonth(month);
-                //插入最新月报表
-                deptWaybillfeeMonthlyMapper.batchWaybillFeeMonthInsert(deptWaybillfeeMonthlies);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("批量插入月报表失败={}", e);
-                throw e;
-            }
+            //删除当月报表
+            deptWaybillfeeMonthlyMapper.batchDeleteWaybillFeeDailyByMonth(month);
+            //插入最新月报表
+            deptWaybillfeeMonthlyMapper.batchWaybillFeeMonthInsert(deptWaybillfeeMonthlies);
         }
     }
 
