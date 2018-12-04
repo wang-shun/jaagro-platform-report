@@ -36,8 +36,10 @@ public class ReportTaskConsumeService {
 
     @RabbitListener(queues = RabbitMqConfig.REPORT_SEND_QUEUE)
     private void consumeTask(ReportTaskDto reportTaskDto) {
+        log.info("S-consumeTask-reportTaskDt0={}",reportTaskDto);
         SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat month = new SimpleDateFormat("yyyy-MM");
+        long begin = System.currentTimeMillis();
         if (ReportTaskType.DRIVER.equals(reportTaskDto.getTaskType())) {
             if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
                 driverReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(), -1)));
@@ -71,5 +73,7 @@ public class ReportTaskConsumeService {
                 waybillFeeReportTaskService.createMonthlyReport(monthString);
             }
         }
+        long end = System.currentTimeMillis();
+        log.info("S-consumeTask-[useTime={},reportTaskDt0={}]",(end-begin),reportTaskDto);
     }
 }
