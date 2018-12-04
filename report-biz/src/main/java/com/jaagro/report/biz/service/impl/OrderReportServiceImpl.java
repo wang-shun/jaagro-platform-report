@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -65,9 +66,31 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderDailyMapperExt.batchInsert(deptOrderDailyList);
         }
-
+        log.info("O-createDailyReport-day={}", orderReportDto);
     }
 
+    /**
+     * 异步生成日报表数据
+     *
+     * @param orderReportDto
+     */
+    @Override
+    @Async
+    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void createDailyReportAsync(OrderReportDto orderReportDto) {
+        String day = orderReportDto.getReportTime();
+        List<DeptOrderDaily> deptOrderDailyList = new ArrayList<>();
+        //1、从tms查询数据 day = '20181128'   yyyyMMdd
+        deptOrderDailyList = orderReportMapperExt.getDeptOrderDailyDataListFromTms(orderReportDto);
+        if (!CollectionUtils.isEmpty(deptOrderDailyList)) {
+            //2、删除当天的数据
+            deptOrderDailyMapperExt.batchDelete(day);
+            //3、把数据保存到report表
+            deptOrderDailyMapperExt.batchInsert(deptOrderDailyList);
+        }
+        log.info("O-createDailyReportAsync-day={}", orderReportDto);
+    }
     /**
      * 生成月报表数据
      *
@@ -88,7 +111,31 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderMonthlyMapperExt.batchInsert(deptOrderMonthlyList);
         }
+        log.info("O-createMonthlyReport-day={}", orderReportDto);
+    }
 
+    /**
+     * 异步生成月报表数据
+     *
+     * @param orderReportDto yyyyMM
+     */
+
+    @Override
+    @Async
+    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void createMonthlyReportAsync(OrderReportDto orderReportDto) {
+        String month = orderReportDto.getReportTime();
+        List<DeptOrderMonthly> deptOrderMonthlyList = new ArrayList<>();
+        //1、从日报表查询出月报表的数据 day = '201811' yyyyMM
+        deptOrderMonthlyList = deptOrderDailyMapperExt.getOrderMonthlyDataFromOrderDaily(orderReportDto);
+        if (!CollectionUtils.isEmpty(deptOrderMonthlyList)) {
+            //2、删除当月的数据
+            deptOrderMonthlyMapperExt.batchDelete(month);
+            //3、把数据保存到report表
+            deptOrderMonthlyMapperExt.batchInsert(deptOrderMonthlyList);
+        }
+        log.info("O-createMonthlyReportAsync-day={}", orderReportDto);
     }
 
     @Override

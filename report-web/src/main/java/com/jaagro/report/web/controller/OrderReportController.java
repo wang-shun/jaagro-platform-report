@@ -38,8 +38,8 @@ public class OrderReportController {
     @PostMapping("/createOrderDailyReport")
     public BaseResponse<DeptOrderDaily> createOrderDailyReport(@RequestBody OrderReportDto orderReportDto) {
 
+        orderReportService.createDailyReportAsync(orderReportDto);
         List<DeptOrderDaily> deptOrderDailyList = orderReportService.getDeptOrderDailyDataListFromTms(orderReportDto);
-        orderReportService.createDailyReport(orderReportDto);
 
         return BaseResponse.successInstance(deptOrderDailyList);
 
@@ -49,8 +49,8 @@ public class OrderReportController {
     @PostMapping("/createOrderMonthlyReport")
     public BaseResponse<DeptOrderDaily> createOrderMonthlyReport(@RequestBody OrderReportDto orderReportDto) {
 
+        orderReportService.createMonthlyReportAsync(orderReportDto);
         List<DeptOrderMonthly> deptOrderMonthlyList = orderReportService.getOrderMonthlyDataFromOrderDaily(orderReportDto);
-        orderReportService.createMonthlyReport(orderReportDto);
 
         return BaseResponse.successInstance(deptOrderMonthlyList);
 
