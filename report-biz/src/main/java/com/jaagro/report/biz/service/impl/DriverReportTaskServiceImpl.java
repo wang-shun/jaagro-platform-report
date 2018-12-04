@@ -245,7 +245,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                             orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("receive_waybill_quantity").toString()));
                         }
                         if (recAndRef.get("refuse_waybill_quantity") != null) {
-                            orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
+                            orderDaily.setRefuseWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
                         }
                     }
                 }
