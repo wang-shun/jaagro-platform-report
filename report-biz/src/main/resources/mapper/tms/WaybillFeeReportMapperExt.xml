@@ -47,7 +47,7 @@
         FROM waybill w
         INNER JOIN orders o on w.order_id=o.id
         INNER JOIN waybill_goods g ON w.id = g.waybill_id
-        WHERE w.waybill_status='已完成'
+        WHERE w.waybill_status='已完成' AND w.enabled=1
         <if test="day!=null">
             AND date_format(w.create_time, '%Y-%m-%d')=#{day}
         </if>
@@ -67,8 +67,9 @@
         FROM waybill w
         RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
         INNER JOIN orders ods ON w.order_id = ods.id
+        WHERE w.enabled=1
         <if test="day!=null">
-            WHERE date_format(t.create_time, '%Y-%m-%d')=#{day}
+            AND date_format(t.create_time, '%Y-%m-%d')=#{day}
         </if>
         ) T_AnomalyWaybillStatistics GROUP BY createDate,dept,type
 
@@ -89,7 +90,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-        WHERE wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND
+        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND  relevance_type=1 AND
         wfa.adjust_type=3
         UNION ALL
         SELECT DISTINCT
@@ -104,7 +105,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-        WHERE wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
+        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
         wfa.adjust_type=3
         ) T_IncomeAnomalyFeeTotalStatistics
         <if test="day!=null">
@@ -129,7 +130,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-        WHERE wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND
+        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND relevance_type=1 AND
         wfa.adjust_type=4
         UNION ALL
         SELECT DISTINCT
@@ -144,7 +145,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-        WHERE wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
+        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND relevance_type=2 AND
         wfa.adjust_type=4
         ) T_ExpendAnomalyFeeTotalStatistics
         <if test="day!=null">
