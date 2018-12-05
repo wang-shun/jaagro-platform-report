@@ -70,5 +70,6 @@
         <if test="truckNumber != null and truckNumber !=''">
             <![CDATA[and (truck_number like concat(#{truckNumber},'%') )]]>
         </if>
+        order by report_time desc
     </select>
 </mapper>
