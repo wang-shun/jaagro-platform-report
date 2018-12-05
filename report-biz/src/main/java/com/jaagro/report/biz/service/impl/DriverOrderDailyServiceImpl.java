@@ -30,7 +30,7 @@ public class DriverOrderDailyServiceImpl implements DriverOrderDailyService {
      * @return
      */
     @Override
-    @Cacheable
+    //@Cacheable
     public List<DriverOrderDaily> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto) {
         return driverOrderDailyMapperExt.listByCriteria(listDriverReportCriteriaDto);
     }
