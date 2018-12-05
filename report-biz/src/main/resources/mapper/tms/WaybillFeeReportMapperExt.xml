@@ -3,7 +3,7 @@
 <mapper namespace="com.jaagro.report.biz.mapper.tms.WaybillFeeReportMapperExt">
     <select id="listWaybillFeeStatisticsByDay" parameterType="java.lang.String"
             resultType="com.jaagro.report.api.entity.DeptWaybillfeeDaily">
-    SELECT reportTime, departmentId,goodsType,anomalyWaybillQuantity,totalWaybillQuantity, goodsQuantity,
+        SELECT reportTime, departmentId,goodsType,anomalyWaybillQuantity,totalWaybillQuantity, goodsQuantity,
         goodsWeight,incomeAnomalyFee,expendAnomalyFee,(incomeAnomalyFee - expendAnomalyFee) grossProfit FROM (
         SELECT createDate as reportTime,dept departmentId,type goodsType,
         SUM(anomalyTotal) AS anomalyWaybillQuantity,
@@ -24,8 +24,9 @@
         FROM
         waybill w
         INNER JOIN orders ods on w.order_id = ods.id
+        WHERE w.waybill_status!='已作废'
         <if test="day!=null">
-            WHERE date_format(w.create_time, '%Y-%m-%d')=#{day}
+            AND date_format(w.create_time, '%Y-%m-%d')=#{day}
         </if>
         GROUP BY createDate,dept,type
         ) T_WaybillStatistics
@@ -147,10 +148,10 @@
         wfa.adjust_type=4
         ) T_ExpendAnomalyFeeTotalStatistics
         <if test="day!=null">
-        WHERE createDate=#{day}
+            WHERE createDate=#{day}
         </if>
         GROUP BY createDate,dept,type
         )Table0 GROUP BY createDate,dept,type ORDER BY createDate
-    )totalTable
+        )totalTable
     </select>
 </mapper>

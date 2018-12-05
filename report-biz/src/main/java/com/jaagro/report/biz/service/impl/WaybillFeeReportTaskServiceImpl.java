@@ -62,7 +62,7 @@ public class WaybillFeeReportTaskServiceImpl implements WaybillFeeReportTaskServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
-        List<DeptWaybillfeeMonthly> deptWaybillfeeMonthlies = deptWaybillfeeDailyMapper.listWaybillFeeStatisticsByMonth("2018-10");
+        List<DeptWaybillfeeMonthly> deptWaybillfeeMonthlies = deptWaybillfeeDailyMapper.listWaybillFeeStatisticsByMonth(month);
         if (!CollectionUtils.isEmpty(deptWaybillfeeMonthlies)) {
             //删除当月报表
             deptWaybillfeeMonthlyMapper.batchDeleteWaybillFeeDailyByMonth(month);

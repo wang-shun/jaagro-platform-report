@@ -24,6 +24,17 @@ public interface OrderReportService {
     void createMonthlyReport(OrderReportDto orderReportDto);
 
     /**
+     * 异步生成日报表
+     * @param orderReportDto yyyy-MM-dd
+     */
+    void createDailyReportAsync(OrderReportDto orderReportDto);
+    /**
+     * 异步生成月报表
+     * @param orderReportDto yyyy-MM
+     */
+    void createMonthlyReportAsync(OrderReportDto orderReportDto);
+
+    /**
      * 从tms统计日报表需要的数据
      * @param orderReportDto
      * @return
