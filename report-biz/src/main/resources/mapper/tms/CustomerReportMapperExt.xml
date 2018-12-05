@@ -41,7 +41,7 @@
 				count( 1 ) AS waybillQuantity,
 				o.customer_id AS customerId,
 				o.goods_type AS goodsType,
-				date_format( w.create_time, '%Y-%m-%d' ) AS createDate,
+				date_format( w.create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				waybill w
 				INNER JOIN orders o ON w.order_id = o.id

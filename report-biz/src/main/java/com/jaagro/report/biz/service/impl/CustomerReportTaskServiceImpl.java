@@ -3,6 +3,7 @@ package com.jaagro.report.biz.service.impl;
 import com.jaagro.report.api.dto.ListCustomerReportCriteriaDto;
 import com.jaagro.report.api.entity.CustomerOrderDaily;
 import com.jaagro.report.api.entity.CustomerOrderMonthly;
+import com.jaagro.report.api.entity.DriverOrderMonthly;
 import com.jaagro.report.api.service.CustomerReportTaskService;
 import com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt;
 import com.jaagro.report.biz.mapper.tms.CustomerReportMapperExt;
@@ -48,7 +49,21 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      */
     @Override
     public void createMonthlyReport(String month) {
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        try {
+            Date beginDate = sdf.parse(month);
+            Date endDate = DateUtils.addMonths(beginDate, 1);
+            String endMonth = sdf.format(endDate);
+            List<CustomerOrderDaily> customerOrderDailyList = dailyMapperExt.listByBeginAndEndTime(month, endMonth);
+            if (!CollectionUtils.isEmpty(customerOrderDailyList)) {
+                // 物理删除原有客户日报表
+                dailyMapperExt.deleteByReportTime(month);
+                // 重新插入
+                dailyMapperExt.batchInsert(customerOrderDailyList);
+            }
+        } catch (Exception ex) {
+            log.error("createMonthlyReport error month=" + month, ex);
+        }
     }
 
     /**

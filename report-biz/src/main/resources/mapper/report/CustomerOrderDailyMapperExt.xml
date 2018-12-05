@@ -14,7 +14,7 @@
         gross_profit_rate, create_time, modify_time
         )
         values
-        <foreach collection="driverOrderDailyList" item="item" separator=",">
+        <foreach collection="customerDailyList" item="item" separator=",">
             (#{id,jdbcType=INTEGER}, #{reportTime,jdbcType=VARCHAR}, #{customerId,jdbcType=INTEGER},
             #{customerName,jdbcType=VARCHAR}, #{orderQuantity,jdbcType=INTEGER}, #{waybillQuantity,jdbcType=INTEGER},
             #{anomalyWaybillQuantity,jdbcType=INTEGER}, #{goodsType,jdbcType=INTEGER}, #{amount,jdbcType=INTEGER},

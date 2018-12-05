@@ -32,4 +32,13 @@ public interface CustomerOrderDailyMapperExt extends CustomerOrderDailyMapper {
      * @return
      */
     List<CustomerOrderDaily> listCustomerDailyByCriteria(ListCustomerReportCriteriaDto dto);
+
+    /**
+     *
+     * @param beginMonth
+     * @param endMonth
+     * @return
+     */
+    List<CustomerOrderDaily> listByBeginAndEndTime(@Param("beginMonth") String beginMonth, @Param("endMonth")String endMonth);
+
 }
