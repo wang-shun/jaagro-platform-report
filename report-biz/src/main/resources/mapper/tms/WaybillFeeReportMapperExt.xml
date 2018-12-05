@@ -24,7 +24,7 @@
         FROM
         waybill w
         INNER JOIN orders ods on w.order_id = ods.id
-        WHERE w.waybill_status!='已作废'
+        WHERE w.enabled=1
         <if test="day!=null">
             AND date_format(w.create_time, '%Y-%m-%d')=#{day}
         </if>
