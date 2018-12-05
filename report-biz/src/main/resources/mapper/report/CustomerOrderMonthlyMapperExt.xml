@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderMonthlyMapperExt" >
-
+<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderMonthlyMapperExt">
+    <select id="listCustomerMonthByCriteria" resultType="com.jaagro.report.api.entity.CustomerOrderMonthly"
+            parameterType="com.jaagro.report.api.dto.ListCustomerReportCriteriaDto">
+        SELECT
+        id,
+        report_time,
+        customer_id,
+        customer_name,
+        sum(order_quantity),
+        sum(waybill_quantity),
+        sum(anomaly_waybill_quantity),
+        goods_type,
+        sum(amount),
+        sum(tonnage),
+        sum(income_freight),
+        sum(income_anomaly_cost),
+        sum(expend_freight),
+        sum(expend_anomaly_cost),
+        sum(gross_profit),
+        create_time
+        FROM
+        customer_order_daily
+        WHERE 1=1
+        <if test="reportTime != null and reportTime != ''">
+            and report_time = #{reportTime}
+        </if>
+        <if test="customerName != null and customerName != ''">
+            <![CDATA[and (customer_name like concat(#{customerName},'%') )]]>
+        </if>
+        <if test="goodsType != null">
+            and goods_type = #{goodsType}
+        </if>
+        GROUP BY
+        customer_id,
+        goods_type,
+        report_time,
+        id
+    </select>
 </mapper>

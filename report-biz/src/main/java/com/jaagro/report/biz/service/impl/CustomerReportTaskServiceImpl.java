@@ -3,9 +3,9 @@ package com.jaagro.report.biz.service.impl;
 import com.jaagro.report.api.dto.ListCustomerReportCriteriaDto;
 import com.jaagro.report.api.entity.CustomerOrderDaily;
 import com.jaagro.report.api.entity.CustomerOrderMonthly;
-import com.jaagro.report.api.entity.DriverOrderMonthly;
 import com.jaagro.report.api.service.CustomerReportTaskService;
 import com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt;
+import com.jaagro.report.biz.mapper.report.CustomerOrderMonthlyMapperExt;
 import com.jaagro.report.biz.mapper.tms.CustomerReportMapperExt;
 import com.jaagro.report.biz.service.CustomerClientService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,8 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
     private CustomerClientService customerClientService;
     @Autowired
     private CustomerOrderDailyMapperExt dailyMapperExt;
+    @Autowired
+    private CustomerOrderMonthlyMapperExt monthlyMapperExt;
 
     /**
      * 生成日报表
@@ -85,14 +87,14 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      */
     @Override
     public List<CustomerOrderMonthly> listCustomerMonthReport(ListCustomerReportCriteriaDto dto) {
-        return null;
+        return monthlyMapperExt.listCustomerMonthByCriteria(dto);
     }
 
     private void createCustomerDailt(String day) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Set<CustomerOrderDaily> customerDailySet = new HashSet<>();
-            Set<Integer> customerIdSet = new HashSet<>();
+            Set<HashMap<String, Integer>> customerIdAndTypeSet = new HashSet<>();
             Date beginDate = sdf.parse(day);
             Date endDate = DateUtils.addDays(beginDate, 1);
             //订单总数
@@ -114,9 +116,9 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             //毛利率
 
             //合并客户结果集
-            this.unionListToDailySet(customerIdSet, orderCountSet, waybillCountSet, anomalyCountSet, amountAndTonnSet, incomeAnomalySet, expendAnomalySet, grossSet);
+            unionListToDailySet(customerIdAndTypeSet, orderCountSet, waybillCountSet, anomalyCountSet, amountAndTonnSet, incomeAnomalySet, expendAnomalySet, grossSet);
             //初始化
-            generateDailyReport(customerIdSet, customerDailySet, day);
+            generateDailyReport(customerIdAndTypeSet, customerDailySet, day);
             //初始化订单总数
             initOrderCount(customerDailySet, orderCountSet);
             //初始化运单总数
@@ -165,19 +167,22 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      * @param list
      * @return
      */
-    private Set<Integer> unionListToDailySet(Set<Integer> customerIdSet, List<HashMap<String, Object>>... list) {
+    private Set<HashMap<String, Integer>> unionListToDailySet(Set<HashMap<String, Integer>> customerIdAndTypeSet, List<HashMap<String, Object>>... list) {
         if (list != null && list.length > 0) {
             for (List<HashMap<String, Object>> subList : list) {
                 if (!CollectionUtils.isEmpty(subList)) {
                     for (HashMap<String, Object> result : subList) {
                         if (!result.isEmpty() && result.get("customerId") != null) {
-                            customerIdSet.add(Integer.valueOf(result.get("customerId").toString()));
+                            HashMap<String, Integer> idMap = new HashMap<>();
+                            idMap.put("customerId", Integer.valueOf(result.get("customerId").toString()));
+                            idMap.put("goodsType", Integer.valueOf(result.get("goodsType").toString()));
+                            customerIdAndTypeSet.add(idMap);
                         }
                     }
                 }
             }
         }
-        return customerIdSet;
+        return customerIdAndTypeSet;
     }
 
     /**
@@ -187,15 +192,27 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      * @param customerDailySet
      * @param day
      */
-    private void generateDailyReport(Set<Integer> customerIdSet, Set<CustomerOrderDaily> customerDailySet, String day) {
-        if (!CollectionUtils.isEmpty(customerIdSet)) {
-            for (Integer customerId : customerIdSet) {
+    private void generateDailyReport(Set<HashMap<String, Integer>> customerIdAndTypeSet, Set<CustomerOrderDaily> customerDailySet, String day) {
+        if (!CollectionUtils.isEmpty(customerIdAndTypeSet)) {
+
+            for (HashMap<String, Integer> customerMap : customerIdAndTypeSet) {
                 CustomerOrderDaily customerDaily = new CustomerOrderDaily();
                 customerDaily
                         .setReportTime(day)
                         .setCreateTime(new Date())
-                        .setCustomerId(customerId)
-                        .setCustomerName(customerClientService.getShowCustomerById(customerId).getCustomerName());
+                        .setCustomerId(customerMap.get("customerId"))
+                        .setGoodsType(customerMap.get("goodsType"))
+                        .setCustomerName(customerClientService.getShowCustomerById(customerMap.get("customerId")).getCustomerName())
+                        .setGrossProfit(new BigDecimal(0))
+                        .setIncomeAnomalyCost(new BigDecimal(0))
+                        .setExpendAnomalyCost(new BigDecimal(0))
+                        .setTonnage(new BigDecimal(0))
+                        .setAnomalyWaybillQuantity(0)
+                        .setOrderQuantity(0)
+                        .setWaybillQuantity(0)
+                        .setExpendFreight(new BigDecimal(0))
+                        .setIncomeFreight(new BigDecimal(0))
+                        .setGrossProfitRate(new BigDecimal(0));
                 customerDailySet.add(customerDaily);
             }
         }
