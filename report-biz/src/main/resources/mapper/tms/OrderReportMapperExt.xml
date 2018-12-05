@@ -20,7 +20,7 @@
                     FROM waybill w
                     LEFT JOIN waybill_tracking t ON w.id = t.waybill_id
                     INNER JOIN orders ods on w.order_id = ods.id
-                    WHERE t.new_status LIKE '%拒单%'
+                    WHERE t.new_status LIKE '%拒单%' and w.enabled=1
                 ) T_RefusedWaybillStatistics group by createDate,dept,type
 
                 UNION
@@ -34,7 +34,7 @@
                      t.waybill_id
                     FROM waybill w
                     RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-                    INNER JOIN orders ods on w.order_id = ods.id
+                    INNER JOIN orders ods on w.order_id = ods.id and w.enabled=1
                 )  T_AnomalyWaybillStatistics  group by createDate,dept,type
 
                 UNION
@@ -51,7 +51,7 @@
                         waybill w
                     INNER JOIN orders ods
                      on w.order_id = ods.id
-                     where w.waybill_status!='已作废' group by createDate,dept,type
+                     where w.waybill_status!='已作废' and w.enabled=1 group by createDate,dept,type
                 ) T_WaybillStatistics
 
                 UNION
@@ -83,7 +83,7 @@
                      waybill w
                      inner join orders o on w.order_id=o.id
                      inner JOIN waybill_goods g ON w.id = g.waybill_id
-                    where w.waybill_status='已完成'
+                    where w.waybill_status='已完成' and w.enabled=1
                       group by createDate,dept,type,waybill_id
                 ) T_QuatityTotalWeightTotalStatistics group by createDate,dept,type
 
