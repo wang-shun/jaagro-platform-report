@@ -36,7 +36,7 @@
         SELECT createDate,dept,type,0 AS anomalyTotal,0 AS waybillTotal,SUM(chknQuantity + pigQuantity) AS QuatityTotal,
         SUM(chknWeight + FodderWeight) AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
         SELECT
-        SUM( CASE WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,
+        SUM( CASE WHEN o.goods_type=1 THEN g.goods_quantity * 8 ELSE 0 END) as chknQuantity,
         SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as chknWeight,
         SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as FodderWeight,
         SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
