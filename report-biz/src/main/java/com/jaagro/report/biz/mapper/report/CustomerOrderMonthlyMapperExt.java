@@ -1,7 +1,9 @@
 package com.jaagro.report.biz.mapper.report;
 
 import com.jaagro.report.api.dto.ListCustomerReportCriteriaDto;
+import com.jaagro.report.api.entity.CustomerOrderDaily;
 import com.jaagro.report.api.entity.CustomerOrderMonthly;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,4 +19,11 @@ public interface CustomerOrderMonthlyMapperExt extends CustomerOrderMonthlyMappe
      * @return
      */
     List<CustomerOrderMonthly> listCustomerMonthByCriteria(ListCustomerReportCriteriaDto dto);
+
+    /**
+     * 循环插入
+     *
+     * @param customerOrderMonthList
+     */
+    void batchInsert(@Param("customerOrderMonthList") List<CustomerOrderMonthly> customerOrderMonthList);
 }

@@ -2,6 +2,7 @@ package com.jaagro.report.biz.mapper.report;
 
 import com.jaagro.report.api.dto.ListCustomerReportCriteriaDto;
 import com.jaagro.report.api.entity.CustomerOrderDaily;
+import com.jaagro.report.api.entity.CustomerOrderMonthly;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -39,6 +40,6 @@ public interface CustomerOrderDailyMapperExt extends CustomerOrderDailyMapper {
      * @param endMonth
      * @return
      */
-    List<CustomerOrderDaily> listByBeginAndEndTime(@Param("beginMonth") String beginMonth, @Param("endMonth")String endMonth);
+    List<CustomerOrderMonthly> listByBeginAndEndTime(@Param("beginMonth") String beginMonth, @Param("endMonth")String endMonth);
 
 }

@@ -56,12 +56,17 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             Date beginDate = sdf.parse(month);
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
-            List<CustomerOrderDaily> customerOrderDailyList = dailyMapperExt.listByBeginAndEndTime(month, endMonth);
-            if (!CollectionUtils.isEmpty(customerOrderDailyList)) {
+            List<CustomerOrderMonthly> customerOrderMonthList = dailyMapperExt.listByBeginAndEndTime(month, endMonth);
+            if (!CollectionUtils.isEmpty(customerOrderMonthList)) {
                 // 物理删除原有客户日报表
                 dailyMapperExt.deleteByReportTime(month);
+                for (CustomerOrderMonthly customerMonth : customerOrderMonthList) {
+                    if (customerMonth != null) {
+                        customerMonth.setCreateTime(new Date());
+                    }
+                }
                 // 重新插入
-                dailyMapperExt.batchInsert(customerOrderDailyList);
+                monthlyMapperExt.batchInsert(customerOrderMonthList);
             }
         } catch (Exception ex) {
             log.error("createMonthlyReport error month=" + month, ex);

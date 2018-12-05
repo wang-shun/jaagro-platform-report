@@ -2,6 +2,8 @@ package com.jaagro.report.web.controller;
 
 import com.jaagro.report.api.dto.ListCustomerReportCriteriaDto;
 import com.jaagro.report.api.dto.WaybillFeeReportDto;
+import com.jaagro.report.api.entity.CustomerOrderDaily;
+import com.jaagro.report.api.entity.CustomerOrderMonthly;
 import com.jaagro.report.api.service.CustomerReportTaskService;
 import com.jaagro.report.api.service.WaybillFeeReportTaskService;
 import com.jaagro.utils.BaseResponse;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 /**
  * @author baiyiran
@@ -26,32 +30,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerReportController {
     @Autowired
     private CustomerReportTaskService customerReportTaskService;
-    @Autowired
-    private WaybillFeeReportTaskService waybillFeeReportTaskService;
 
     @ApiOperation(value = "生成客户日报表")
     @PostMapping("/createCustomerDailyReport/{day}")
-    public BaseResponse createWaybillFeeDailyReport(@PathVariable String day) {
+    public BaseResponse<String> createWaybillFeeDailyReport(@PathVariable String day) {
         customerReportTaskService.createDailyReport(day);
         return BaseResponse.successInstance(ResponseStatusCode.OPERATION_SUCCESS.getMsg());
     }
 
     @ApiOperation(value = "生成客户月报表")
     @PostMapping("/createCustomerMonthReport/{month}")
-    public BaseResponse createWaybillFeeMonthReport(@PathVariable String month) {
+    public BaseResponse<String> createWaybillFeeMonthReport(@PathVariable String month) {
         customerReportTaskService.createMonthlyReport(month);
         return BaseResponse.successInstance(ResponseStatusCode.OPERATION_SUCCESS.getMsg());
     }
 
     @ApiOperation(value = "客户日报表列表")
     @PostMapping("/listCustomerDailyReport")
-    public BaseResponse listWaybillFeeDailyReport(@RequestBody ListCustomerReportCriteriaDto dto) {
+    public BaseResponse<List<CustomerOrderDaily>> listWaybillFeeDailyReport(@RequestBody ListCustomerReportCriteriaDto dto) {
         return BaseResponse.successInstance(customerReportTaskService.listCustomerDailyReport(dto));
     }
 
     @ApiOperation(value = "客户月报表列表")
     @PostMapping("/listCustomerMonthReport")
-    public BaseResponse listWaybillFeeMonthReport(@RequestBody ListCustomerReportCriteriaDto dto) {
+    public BaseResponse<List<CustomerOrderMonthly>> listWaybillFeeMonthReport(@RequestBody ListCustomerReportCriteriaDto dto) {
         return BaseResponse.successInstance(customerReportTaskService.listCustomerMonthReport(dto));
     }
 }

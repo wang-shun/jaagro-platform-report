@@ -38,4 +38,27 @@
         report_time,
         id
     </select>
+    <insert id="batchInsert" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly">
+        insert into customer_order_monthly (id, report_time, customer_id,
+        customer_name, order_quantity, waybill_quantity,
+        anomaly_waybill_quantity, goods_type, amount,
+        tonnage, income_freight, income_anomaly_cost,
+        expend_freight, expend_anomaly_cost, gross_profit,
+        gross_profit_rate, create_time
+        )
+        values
+        <foreach collection="customerOrderMonthList" item="item" separator=",">
+            (#{item.id,jdbcType=INTEGER}, #{item.reportTime,jdbcType=VARCHAR}, #{item.customerId,jdbcType=INTEGER},
+            #{item.customerName,jdbcType=VARCHAR}, #{item.orderQuantity,jdbcType=INTEGER},
+            #{item.waybillQuantity,jdbcType=INTEGER},
+            #{item.anomalyWaybillQuantity,jdbcType=INTEGER}, #{item.goodsType,jdbcType=INTEGER},
+            #{item.amount,jdbcType=INTEGER},
+            #{item.tonnage,jdbcType=DECIMAL}, #{item.incomeFreight,jdbcType=DECIMAL},
+            #{item.incomeAnomalyCost,jdbcType=DECIMAL},
+            #{item.expendFreight,jdbcType=DECIMAL}, #{item.expendAnomalyCost,jdbcType=DECIMAL},
+            #{item.grossProfit,jdbcType=DECIMAL},
+            #{item.grossProfitRate,jdbcType=DECIMAL}, #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
 </mapper>
