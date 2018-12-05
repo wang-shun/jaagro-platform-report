@@ -29,7 +29,7 @@ public class ReportTaskService {
      */
     @Scheduled(cron = "0 0 1 * * ?")
     public void driverDailyReportTaskToQueue() {
-        log.info("S-driverDailyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.DRIVER, ReportDateType.DAILY);
+        log.info("S driverDailyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.DRIVER, ReportDateType.DAILY);
         putToQueue(new ReportTaskDto(ReportTaskType.DRIVER, ReportDateType.DAILY));
     }
 
@@ -38,7 +38,7 @@ public class ReportTaskService {
      */
     @Scheduled(cron = "0 30 1 * * ?")
     public void driverMonthlyReportTaskToQueue() {
-        log.info("S-driverMonthlyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.DRIVER, ReportDateType.MONTHLY);
+        log.info("S driverMonthlyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.DRIVER, ReportDateType.MONTHLY);
         putToQueue(new ReportTaskDto(ReportTaskType.DRIVER, ReportDateType.MONTHLY));
     }
 
@@ -56,7 +56,7 @@ public class ReportTaskService {
      */
     @Scheduled(cron = "0 30 2 * * ?")
     public void customerMonthlyReportTaskToQueue() {
-        log.info("S-customerMonthlyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.CUSTOMER, ReportDateType.MONTHLY);
+        log.info("S customerMonthlyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.CUSTOMER, ReportDateType.MONTHLY);
         putToQueue(new ReportTaskDto(ReportTaskType.CUSTOMER, ReportDateType.MONTHLY));
     }
 
@@ -65,7 +65,7 @@ public class ReportTaskService {
      */
     @Scheduled(cron = "0 0 3 * * ?")
     public void deptOrderDailyReportTaskToQueue() {
-        log.info("S-deptOrderDailyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.ORDER, ReportDateType.DAILY);
+        log.info("S deptOrderDailyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.ORDER, ReportDateType.DAILY);
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.DAILY));
     }
 
@@ -75,7 +75,7 @@ public class ReportTaskService {
 
     @Scheduled(cron = "0 30 3 * * ?")
     public void deptOrderMonthlyReportTaskToQueue() {
-        log.info("S-deptOrderMonthlyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.ORDER, ReportDateType.MONTHLY);
+        log.info("S deptOrderMonthlyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.ORDER, ReportDateType.MONTHLY);
         putToQueue(new ReportTaskDto(ReportTaskType.ORDER, ReportDateType.MONTHLY));
     }
 
@@ -93,7 +93,7 @@ public class ReportTaskService {
      */
     @Scheduled(cron = "0 30 4 * * ?")
     public void deptWaybillFeeMonthlyReportTaskToQueue() {
-        log.info("S-deptWaybillFeeMonthlyReportTaskToQueue-[reportTaskType={},reportDateType={}]", ReportTaskType.WAYBILL_FEE, ReportDateType.MONTHLY);
+        log.info("S deptWaybillFeeMonthlyReportTaskToQueue [reportTaskType={},reportDateType={}]", ReportTaskType.WAYBILL_FEE, ReportDateType.MONTHLY);
         putToQueue(new ReportTaskDto(ReportTaskType.WAYBILL_FEE, ReportDateType.MONTHLY));
     }
 
