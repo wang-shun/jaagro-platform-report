@@ -51,7 +51,7 @@
                         waybill w
                     INNER JOIN orders ods
                      on w.order_id = ods.id
-                     where w.waybill_status!='已作废' and w.enabled=1 group by createDate,dept,type
+                     where w.enabled=1 group by createDate,dept,type
                 ) T_WaybillStatistics
 
                 UNION
