@@ -21,8 +21,8 @@
          INNER JOIN waybill w
          ON t.waybill_id = w.id
          WHERE t.enabled = 1
-         AND t.audit_status = '已通过'
-         AND t.audit_time BETWEEN #{beginDate} AND #{endDate}
+         AND t.processing_status = '已结束'
+         AND t.processor_time BETWEEN #{beginDate} AND #{endDate}
          AND w.driver_id IS NOT NULL
          AND w.enabled = 1
          GROUP BY w.driver_id
