@@ -26,7 +26,6 @@
     </insert>
     <select id="listOrderMonthlyReport" parameterType="com.jaagro.report.api.dto.OrderReportDto"
             resultType="com.jaagro.report.api.entity.DeptOrderMonthly">
-
         select
         <include refid="Base_Column_List" />
         from dept_order_monthly

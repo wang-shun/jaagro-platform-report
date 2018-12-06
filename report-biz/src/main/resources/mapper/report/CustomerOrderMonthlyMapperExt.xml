@@ -38,6 +38,7 @@
         goods_type,
         report_time,
         id
+        ORDER BY report_time DESC
     </select>
     <insert id="batchInsert" parameterType="com.jaagro.report.api.entity.CustomerOrderMonthly">
         insert into customer_order_monthly (id, report_time, customer_id,

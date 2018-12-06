@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
-@Api(description = "运单费用表生成", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(description = "运单费用报表生成", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WaybillFeeReportController {
     @Autowired
     private WaybillFeeReportTaskService waybillFeeReportTaskService;
