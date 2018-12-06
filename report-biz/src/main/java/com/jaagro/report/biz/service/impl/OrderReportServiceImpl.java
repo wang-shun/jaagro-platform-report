@@ -157,7 +157,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 
 
     @Override
-    @Cacheable
+//    @Cacheable
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
@@ -180,7 +180,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 
 
     @Override
-    @Cacheable
+//    @Cacheable
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());

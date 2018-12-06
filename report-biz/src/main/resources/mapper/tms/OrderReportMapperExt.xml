@@ -20,7 +20,7 @@
                     FROM waybill w
                     LEFT JOIN waybill_tracking t ON w.id = t.waybill_id
                     INNER JOIN orders ods on w.order_id = ods.id
-                    WHERE t.new_status LIKE '%拒单%'
+                    WHERE t.new_status LIKE '%拒单%' and w.enabled=1
                 ) T_RefusedWaybillStatistics group by createDate,dept,type
 
                 UNION
@@ -34,7 +34,7 @@
                      t.waybill_id
                     FROM waybill w
                     RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-                    INNER JOIN orders ods on w.order_id = ods.id
+                    INNER JOIN orders ods on w.order_id = ods.id and w.enabled=1
                 )  T_AnomalyWaybillStatistics  group by createDate,dept,type
 
                 UNION
@@ -51,7 +51,7 @@
                         waybill w
                     INNER JOIN orders ods
                      on w.order_id = ods.id
-                     where w.waybill_status!='已作废' group by createDate,dept,type
+                     where w.enabled=1 group by createDate,dept,type
                 ) T_WaybillStatistics
 
                 UNION
@@ -71,7 +71,7 @@
                 SELECT createDate,dept,type,0 as ordertotal,0 as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,
                         sum(chknQuantity + pigQuantity) as QuatityTotal,sum(chknWeight + FodderWeight) as WeightTotal from(
                     SELECT
-                    sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+                    sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity*8 ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
                     sum( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
                     sum( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as  FodderWeight,	-- 3 吨（饲料） 卸货重量
                     sum( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,	-- 2 头（猪）   卸货数量
@@ -83,7 +83,7 @@
                      waybill w
                      inner join orders o on w.order_id=o.id
                      inner JOIN waybill_goods g ON w.id = g.waybill_id
-                    where w.waybill_status='已完成'
+                    where w.waybill_status='已完成' and w.enabled=1
                       group by createDate,dept,type,waybill_id
                 ) T_QuatityTotalWeightTotalStatistics group by createDate,dept,type
 

@@ -44,5 +44,6 @@
                 and goods_type = #{goodsType}
             </if>
         </where>
+        order by report_time desc
     </select>
 </mapper>

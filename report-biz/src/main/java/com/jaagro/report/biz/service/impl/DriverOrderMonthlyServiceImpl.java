@@ -28,7 +28,7 @@ public class DriverOrderMonthlyServiceImpl implements DriverOrderMonthlyService 
      * @return
      */
     @Override
-    @Cacheable
+    //@Cacheable
     public List<DriverOrderMonthly> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto) {
         return driverOrderMonthlyMapperExt.listByCriteria(listDriverReportCriteriaDto);
     }
