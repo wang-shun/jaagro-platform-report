@@ -7,19 +7,31 @@
 			customerId,
 			orderQuantity,
 		CASE
-			WHEN type = 1 THEN 1
-			WHEN type = 2 THEN 2
-			WHEN type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+
+			WHEN type = 1 THEN
+			1
+			WHEN type = 2 THEN
+			2
+			WHEN type IN ( 3, 4, 5, 6 ) THEN
+			3
+			END AS goodsType
 		FROM
 			(
 			SELECT
 				count( 1 ) AS orderQuantity,
 				customer_id AS customerId,
-				goods_type AS type,
+			CASE
+
+					WHEN goods_type = 1 THEN
+					1
+					WHEN goods_type = 2 THEN
+					2
+					WHEN goods_type IN ( 3, 4, 5, 6 ) THEN
+					3
+				END AS type,
 				date_format( create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				orders
-			WHERE create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				customerId,
 				type,
