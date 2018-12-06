@@ -180,9 +180,12 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                     for (HashMap<String, Object> result : subList) {
                         if (!result.isEmpty() && result.get("customerId") != null && result.get("goodsType") != null) {
                             HashMap<String, Integer> idMap = new HashMap<>(2);
-                            idMap.put("customerId", Integer.valueOf(result.get("customerId").toString()));
-                            idMap.put("goodsType", Integer.valueOf(result.get("goodsType").toString()));
-                            customerIdAndTypeSet.add(idMap);
+                            ShowCustomerDto showCustomerDto = customerClientService.getShowCustomerById(Integer.valueOf(result.get("customerId").toString()));
+                            if (showCustomerDto != null) {
+                                idMap.put("customerId", Integer.valueOf(result.get("customerId").toString()));
+                                idMap.put("goodsType", Integer.valueOf(result.get("goodsType").toString()));
+                                customerIdAndTypeSet.add(idMap);
+                            }
                         }
                     }
                 }
