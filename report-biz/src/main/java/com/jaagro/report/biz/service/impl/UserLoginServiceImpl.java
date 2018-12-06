@@ -44,7 +44,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                     .setLoginDate(new Date());
             int result = userLoginMapper.insertSelective(userLogin);
             if (result < 1) {
-                log.warn("记录创建失败：{}", userLoginDto);
+                log.warn("createUserLogin failed：{}", userLoginDto);
             }
         }
     }
