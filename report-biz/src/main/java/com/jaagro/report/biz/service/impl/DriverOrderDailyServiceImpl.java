@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
+//@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverOrderDailyServiceImpl implements DriverOrderDailyService {
     @Autowired
     private DriverOrderDailyMapperExt driverOrderDailyMapperExt;
@@ -30,7 +30,7 @@ public class DriverOrderDailyServiceImpl implements DriverOrderDailyService {
      * @return
      */
     @Override
-    @Cacheable
+    //@Cacheable
     public List<DriverOrderDaily> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto) {
         return driverOrderDailyMapperExt.listByCriteria(listDriverReportCriteriaDto);
     }

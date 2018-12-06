@@ -1,4 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.CustomerOrderDailyMapperExt">
+    <delete id="deleteByReportTime">
+        DELETE from customer_order_daily
+        WHERE report_time = #{reportTime}
+    </delete>
+    <insert id="batchInsert" parameterType="com.jaagro.report.api.entity.CustomerOrderDaily">
+        insert into customer_order_daily (id, report_time, customer_id,
+        customer_name, order_quantity, waybill_quantity,
+        anomaly_waybill_quantity, goods_type, amount,
+        tonnage, income_freight, income_anomaly_cost,
+        expend_freight, expend_anomaly_cost, gross_profit,
+        gross_profit_rate, create_time
+        )
+        values
+        <foreach collection="customerDailyList" item="item" separator=",">
+            (#{item.id,jdbcType=INTEGER}, #{item.reportTime,jdbcType=VARCHAR}, #{item.customerId,jdbcType=INTEGER},
+            #{item.customerName,jdbcType=VARCHAR}, #{item.orderQuantity,jdbcType=INTEGER},
+            #{item.waybillQuantity,jdbcType=INTEGER},
+            #{item.anomalyWaybillQuantity,jdbcType=INTEGER}, #{item.goodsType,jdbcType=INTEGER},
+            #{item.amount,jdbcType=INTEGER},
+            #{item.tonnage,jdbcType=DECIMAL}, #{item.incomeFreight,jdbcType=DECIMAL},
+            #{item.incomeAnomalyCost,jdbcType=DECIMAL},
+            #{item.expendFreight,jdbcType=DECIMAL}, #{item.expendAnomalyCost,jdbcType=DECIMAL},
+            #{item.grossProfit,jdbcType=DECIMAL},
+            #{item.grossProfitRate,jdbcType=DECIMAL}, #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <select id="listCustomerDailyByCriteria" parameterType="com.jaagro.report.api.dto.ListCustomerReportCriteriaDto"
+            resultType="com.jaagro.report.api.entity.CustomerOrderDaily">
+        SELECT
+        id,
+        report_time,
+        customer_id,
+        customer_name,
+        sum(order_quantity) as order_quantity,
+        sum(waybill_quantity) as waybill_quantity,
+        sum(anomaly_waybill_quantity) as anomaly_waybill_quantity,
+        goods_type,
+        sum(amount) as amount,
+        sum(tonnage) as tonnage,
+        sum(income_freight) as income_freight,
+        sum(income_anomaly_cost) as income_anomaly_cost,
+        sum(expend_freight) as expend_freight,
+        sum(expend_anomaly_cost) as expend_anomaly_cost,
+        sum(gross_profit) as gross_profit,
+        create_time
+        FROM
+        customer_order_daily
+        WHERE 1=1
+        <if test="reportTime != null and reportTime != ''">
+            and report_time = #{reportTime}
+        </if>
+        <if test="customerName != null and customerName != ''">
+            <![CDATA[and (customer_name like concat(#{customerName},'%') )]]>
+        </if>
+        <if test="goodsType != null">
+            and goods_type = #{goodsType}
+        </if>
+        GROUP BY
+        customer_id,
+        goods_type,
+        report_time,
+        id
+        ORDER BY report_time DESC
+    </select>
+    <select id="listByBeginAndEndTime" parameterType="java.lang.String"
+            resultType="com.jaagro.report.api.entity.CustomerOrderMonthly">
+        SELECT
+            SUBSTR( report_time, 1, 7 ) AS reportTime,
+            id,
+            customer_id AS customerId,
+            customer_name AS customerName,
+            SUM(order_quantity) as orderQuantity,
+            SUM(waybill_quantity) AS waybillQuantity,
+            SUM(anomaly_waybill_quantity) AS anomalyWaybillQuantity,
+            goods_type AS goodsType,
+            SUM(amount) AS amount,
+            SUM(tonnage) AS tonnage,
+            SUM(income_freight) AS incomeFreight,
+            SUM(income_anomaly_cost) AS incomeAnomalyCost,
+            SUM(expend_freight) AS expendFreight,
+            SUM(expend_anomaly_cost) AS expendAnomalyCost
+        FROM
+            customer_order_daily
+        GROUP BY
+            customerId,
+            goodsType,
+            SUBSTR( reportTime, 1, 7 ),
+            customerName,
+            id
+        ORDER BY reportTime DESC
+    </select>
 </mapper>

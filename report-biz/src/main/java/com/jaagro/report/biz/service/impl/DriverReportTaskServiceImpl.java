@@ -1,6 +1,5 @@
 package com.jaagro.report.biz.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.jaagro.report.api.dto.DriverReturnDto;
 import com.jaagro.report.api.dto.TruckDto;
 import com.jaagro.report.api.entity.DriverOrderDaily;
@@ -36,7 +35,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
+//@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Autowired
     private DriverReportMapperExt driverReportMapperExt;
@@ -55,9 +54,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param day yyyy-MM-dd
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
+        log.info("O createDailyReport day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -67,9 +67,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param month yyyy-MM
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
+        log.info("O createMonthlyReport month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -80,9 +81,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(String day) {
+        log.info("O createDailyReportAsync day={}", day);
         createDriverOrderDailyReport(day);
     }
 
@@ -93,9 +95,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(String month) {
+        log.info("O createMonthlyReportAsync month={}", month);
         createDriverOrderMonthlyReport(month);
     }
 
@@ -151,7 +154,6 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             Date endDate = DateUtils.addMonths(beginDate, 1);
             String endMonth = sdf.format(endDate);
             List<DriverOrderMonthly> driverOrderMonthlyList = driverOrderDailyMapperExt.listByBeginTimeAndEndTime(month, endMonth);
-            log.info("driverOrderMonthlyList={}", JSON.toJSONString(driverOrderMonthlyList));
             if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
                 // 物理删除原有日报表
                 driverOrderMonthlyMapperExt.deleteByReportTime(month);
@@ -244,7 +246,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                             orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("receive_waybill_quantity").toString()));
                         }
                         if (recAndRef.get("refuse_waybill_quantity") != null) {
-                            orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
+                            orderDaily.setRefuseWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
                         }
                     }
                 }
@@ -317,7 +319,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                         if (loadTotalAndPunctuality.get("total") != null && loadTotalAndPunctuality.get("punctuality") != null) {
                             String total = loadTotalAndPunctuality.get("total").toString();
                             if (!total.equals("0")) {
-                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("total").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
+                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("punctuality").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
                             } else {
                                 orderDaily.setLoadPunctualityRate(new BigDecimal("0"));
                             }

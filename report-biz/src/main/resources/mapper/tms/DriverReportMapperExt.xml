@@ -21,9 +21,10 @@
          INNER JOIN waybill w
          ON t.waybill_id = w.id
          WHERE t.enabled = 1
-         AND t.audit_status = '已通过'
-         AND t.create_time BETWEEN #{beginDate} AND #{endDate}
+         AND t.processing_status = '已结束'
+         AND t.processor_time BETWEEN #{beginDate} AND #{endDate}
          AND w.driver_id IS NOT NULL
+         AND w.enabled = 1
          GROUP BY w.driver_id
     </select>
     <select id="listCompleteCount" resultType="java.util.HashMap">
@@ -33,6 +34,7 @@
         from waybill w
         where w.waybill_status = '已完成'
         AND w.modify_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
         GROUP BY driver_id
     </select>
     <select id="listAvgRecDuration" resultType="java.util.HashMap">
@@ -67,7 +69,7 @@
         ( CASE WHEN wt.create_time &lt; w.load_time
         THEN 1 ELSE 0 END ) AS punctuality
         FROM waybill w
-        INNER JOIN waybill_tracking wt
+        LEFT JOIN waybill_tracking wt
         ON w.id = wt.waybill_id
         AND w.driver_id = wt.driver_id
         WHERE wt.new_status = '待装货'
@@ -91,6 +93,7 @@
         AND wfa.relevance_type = 2
         AND driver_id IS NOT NULL
         AND wa.audit_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
         GROUP BY w.driver_id
     </select>
 </mapper>

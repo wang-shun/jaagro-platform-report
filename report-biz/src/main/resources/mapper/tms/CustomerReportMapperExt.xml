@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jaagro.report.biz.mapper.tms.CustomerReportMapperExt">
+    <select id="listOrderCount" resultType="java.util.HashMap">
+		SELECT
+			createDate,
+			customerId,
+			orderQuantity,
+		CASE
+			WHEN type = 1 THEN 1
+			WHEN type = 2 THEN 2
+			WHEN type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+		FROM
+			(
+			SELECT
+				count( 1 ) AS orderQuantity,
+				customer_id AS customerId,
+				goods_type AS type,
+				date_format( create_time, '%Y-%m-%d' ) AS createDate
+			FROM
+				orders
+			WHERE create_time BETWEEN #{beginDate} AND #{endDate}
+			GROUP BY
+				customerId,
+				type,
+			createDate
+		) temp_order
+    </select>
+    <select id="listWaybillCount" resultType="java.util.HashMap">
+		SELECT
+			createDate,
+			customerId,
+			waybillQuantity,
+		CASE
+			WHEN goodsType = 1 THEN 1
+			WHEN goodsType = 2 THEN 2
+			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+		FROM
+			(
+			SELECT
+				count( 1 ) AS waybillQuantity,
+				o.customer_id AS customerId,
+				o.goods_type AS goodsType,
+				date_format( w.create_time, '%Y-%m-%d' ) AS createDate
+			FROM
+				waybill w
+				INNER JOIN orders o ON w.order_id = o.id
+			WHERE
+			w.enabled=1
+			and
+			w.create_time BETWEEN #{beginDate} AND #{endDate}
+			GROUP BY
+				createDate,
+				customerId,
+			goodsType
+		) temp_waybill
+    </select>
+    <select id="listAnomalyCount" resultType="java.util.HashMap">
+		SELECT
+			createDate,
+			customerId,
+			count( 1 ) AS anomalyWaybillQuantity,
+		CASE
+			WHEN goodsType = 1 THEN 1
+			WHEN goodsType = 2 THEN 2
+			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+			FROM
+			(
+				SELECT DISTINCT
+					date_format( t.create_time, '%Y-%m-%d' ) AS createDate,
+					o.customer_id AS customerId,
+					o.goods_type AS goodsType
+				FROM
+					waybill w
+					RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
+					INNER JOIN orders o ON w.order_id = o.id
+				WHERE t.create_time BETWEEN #{beginDate} AND #{endDate}
+			) temp_anomal
+		GROUP BY
+				customerId,
+				goodsType,
+				createDate
+	</select>
+    <select id="listAmmountAndTonn" resultType="java.util.HashMap">
+		SELECT
+			createDate,
+			customerId,
+			goodsType,
+			sum( chknQuantity + pigQuantity ) AS amount,
+			sum( chknWeight + FodderWeight ) AS tonnage
+		FROM
+			(
+				SELECT
+					sum( CASE WHEN o.goods_type = 1 THEN g.goods_quantity * 8 ELSE 0 END ) AS chknQuantity,
+				-- 1 羽（毛鸡） 计划数量
+					sum( CASE WHEN o.goods_type = 1 THEN g.unload_weight ELSE 0 END ) AS chknWeight,
+				-- 1 羽（毛鸡） 卸货重量
+					sum( CASE WHEN o.goods_type = 2 THEN g.unload_weight ELSE 0 END ) AS FodderWeight,
+				-- 3 吨（饲料） 卸货重量
+					sum( CASE WHEN o.goods_type IN ( 3, 4, 5, 6 ) THEN g.unload_quantity ELSE 0 END ) AS pigQuantity,
+				-- 2 头（猪）   卸货数量
+					date_format( w.create_time, '%Y-%m-%d' ) AS createDate,
+					o.customer_id AS customerId,
+				CASE
+					WHEN o.goods_type = 1 THEN 1
+					WHEN o.goods_type = 2 THEN 2
+					WHEN o.goods_type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+				FROM
+					waybill w
+					INNER JOIN orders o ON w.order_id = o.id
+					INNER JOIN waybill_goods g ON w.id = g.waybill_id
+				WHERE
+					w.waybill_status = '已完成'
+					and w.enabled=1
+					and w.create_time BETWEEN #{beginDate} AND #{endDate}
+				GROUP BY
+					customerId,
+					goodsType,
+					createDate
+					) temp_quantity
+		GROUP BY
+			customerId,
+			goodsType,
+			createDate
+	</select>
+    <select id="ListIncomeAnomalyCost" resultType="java.util.HashMap">
+		SELECT
+		createDate,
+		customerId,
+		SUM( money ) incomeAnomalyCost,
+	CASE
+		WHEN goodsType = 1 THEN 1
+		WHEN goodsType = 2 THEN 2
+		WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+	FROM
+		(
+			SELECT DISTINCT
+				date_format( wcf.create_time, '%Y-%m-%d' ) createDate,
+				o.goods_type AS goodsType,
+				o.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wcf.money
+			FROM
+				waybill w
+				INNER JOIN orders o ON w.order_id = o.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_customer_fee wcf ON ( wa.id = wcf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wcf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wcf.money > 0
+				AND wfa.enabled = 1
+				AND wcf.enabled = 1
+				AND relevance_type = 1
+				AND wfa.adjust_type = 3
+				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
+		UNION ALL
+			SELECT DISTINCT
+				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
+				o.goods_type AS goodsType,
+				o.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wtf.money
+			FROM
+				waybill w
+				INNER JOIN orders o ON w.order_id = o.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_truck_fee wtf ON ( wa.id = wtf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wtf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wtf.money > 0
+				AND wfa.enabled = 1
+				AND wtf.enabled = 1
+				AND relevance_type = 2
+				AND wfa.adjust_type = 3
+				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
+		) temp_AnomalyCost
+	GROUP BY
+		customerId,
+		goodsType,
+		createDate
+	</select>
+    <select id="listExpendAnomalyCost" resultType="java.util.HashMap">
+		SELECT
+			createDate,
+			customerId,
+			SUM( money ) expendAnomalyCost,
+		CASE
+			WHEN goodsType = 1 THEN 1
+			WHEN goodsType = 2 THEN 2
+			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+		FROM
+			(
+			SELECT DISTINCT
+				date_format( wcf.create_time, '%Y-%m-%d' ) createDate,
+				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wcf.money
+			FROM
+				waybill w
+				INNER JOIN orders ods ON w.order_id = ods.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_customer_fee wcf ON ( wa.id = wcf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wcf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wcf.money > 0
+				AND wfa.enabled = 1
+				AND wcf.enabled = 1
+				AND relevance_type = 1
+				AND wfa.adjust_type = 4
+				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
+		UNION ALL
+			SELECT DISTINCT
+				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
+				ods.customer_id AS customerId,
+				ods.goods_type AS goodsType,
+				wfa.adjust_type adjustType,
+				wtf.money
+			FROM
+				waybill w
+				INNER JOIN orders ods ON w.order_id = ods.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_truck_fee wtf ON ( wa.id = wtf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wtf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wtf.money > 0
+				AND wfa.enabled = 1
+				AND wtf.enabled = 1
+				AND relevance_type = 2
+				AND wfa.adjust_type = 4
+				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
+			) T_ExpendAnomalyFeeTotalStatistics
+		GROUP BY
+			customerId,
+			goodsType,
+			createDate
+		ORDER BY
+		createDate
+	</select>
+    <select id="listGrossProfit" resultType="java.util.HashMap">
+		SELECT
+			reportTime,
+			customerId,
+			goodsType,
+			incomeAnomalyCost,
+			expendAnomalyCost,
+			( incomeAnomalyCost - expendAnomalyCost ) grossProfit
+		FROM
+			(
+		SELECT
+			createDate AS reportTime,
+			customerId,
+			goodsType,
+			SUM( incomeAnomalyFee ) AS incomeAnomalyCost,
+			SUM( expendAnomalyFee ) AS expendAnomalyCost
+		FROM
+			(
+		-- 异常费用收入
+		SELECT
+			createDate,
+			customerId,
+			SUM( money ) incomeAnomalyFee,
+			0 AS expendAnomalyFee,
+		CASE
+			WHEN type = 1 THEN 1
+			WHEN type = 2 THEN 2
+			WHEN type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+		FROM
+			(
+			SELECT DISTINCT
+				date_format( wcf.create_time, '%Y-%m-%d' ) createDate,
+				o.goods_type AS type,
+				o.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wcf.money
+			FROM
+				waybill w
+				INNER JOIN orders o ON w.order_id = o.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_customer_fee wcf ON ( wa.id = wcf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wcf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wcf.money > 0
+				AND wfa.enabled = 1
+				AND wcf.enabled = 1
+				AND relevance_type = 1
+				AND wfa.adjust_type = 3
+				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
+		UNION ALL
+			SELECT DISTINCT
+				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
+				o.goods_type AS type,
+				o.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wtf.money
+			FROM
+				waybill w
+				INNER JOIN orders o ON w.order_id = o.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_truck_fee wtf ON ( wa.id = wtf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wtf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wtf.money > 0
+				AND wfa.enabled = 1
+				AND wtf.enabled = 1
+				AND relevance_type = 2
+				AND wfa.adjust_type = 3
+				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
+			) temp_AnomalyCost
+		GROUP BY
+			customerId,
+			type,
+			createDate UNION ALL
+		-- 异常费用支出
+		SELECT
+			createDate,
+			customerId,
+			0 AS incomeAnomalyFee,
+			SUM( money ) expendAnomalyFee,
+		CASE
+			WHEN goodsType = 1 THEN 1
+			WHEN goodsType = 2 THEN 2
+			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+		FROM
+			(
+			SELECT DISTINCT
+				date_format( wcf.create_time, '%Y-%m-%d' ) createDate,
+				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
+				wfa.adjust_type adjustType,
+				wcf.money
+			FROM
+				waybill w
+				INNER JOIN orders ods ON w.order_id = ods.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_customer_fee wcf ON ( wa.id = wcf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wcf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wcf.money > 0
+				AND wfa.enabled = 1
+				AND wcf.enabled = 1
+				AND relevance_type = 1
+				AND wfa.adjust_type = 4
+				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
+		UNION ALL
+			SELECT DISTINCT
+				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
+				ods.customer_id AS customerId,
+				ods.goods_type AS goodsType,
+				wfa.adjust_type adjustType,
+				wtf.money
+			FROM
+				waybill w
+				INNER JOIN orders ods ON w.order_id = ods.id
+				RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
+				INNER JOIN waybill_truck_fee wtf ON ( wa.id = wtf.anomaly_id )
+				INNER JOIN waybill_fee_adjustment wfa ON ( wtf.id = wfa.relevance_id )
+			WHERE
+				wa.audit_status = '已通过'
+				AND wtf.money > 0
+				AND wfa.enabled = 1
+				AND wtf.enabled = 1
+				AND relevance_type = 2
+				AND wfa.adjust_type = 4
+				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
+			) T_ExpendAnomalyFeeTotalStatistics
+		GROUP BY
+			customerId,
+			goodsType,
+			createDate
+			) Table0
+		GROUP BY
+			customerId,
+			goodsType,
+			createDate
+		ORDER BY
+			createDate
+		) totalTable
+	</select>
+</mapper>
