@@ -73,7 +73,7 @@
 				FROM
 					waybill w
 					RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-					INNER JOIN orders o ON w.order_id = o.id
+					INNER JOIN orders o ON w.order_id = o.id and w.waybill_status!='已作废'
 				WHERE t.create_time BETWEEN #{beginDate} AND #{endDate}
 			) temp_anomal
 		GROUP BY
@@ -125,7 +125,7 @@
 	</select>
     <select id="ListIncomeAnomalyCost" resultType="java.util.HashMap">
 		SELECT
-		createDate,
+		createDate,1
 		customerId,
 		SUM( money ) incomeAnomalyCost,
 	CASE
