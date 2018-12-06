@@ -335,7 +335,7 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                     if (!CollectionUtils.isEmpty(orderCount)) {
                         if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("incomeAnomalyCost") != null) {
                             if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
-                                orderDaily.setTonnage(new BigDecimal(orderCount.get("incomeAnomalyCost").toString()));
+                                orderDaily.setIncomeAnomalyCost(new BigDecimal(orderCount.get("incomeAnomalyCost").toString()));
                             }
                         }
                     }
@@ -357,7 +357,7 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                     if (!CollectionUtils.isEmpty(orderCount)) {
                         if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("expendAnomalyCost") != null) {
                             if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
-                                orderDaily.setTonnage(new BigDecimal(orderCount.get("expendAnomalyCost").toString()));
+                                orderDaily.setExpendAnomalyCost(new BigDecimal(orderCount.get("expendAnomalyCost").toString()));
                             }
                         }
                     }
