@@ -125,7 +125,7 @@
 	</select>
     <select id="ListIncomeAnomalyCost" resultType="java.util.HashMap">
 		SELECT
-		createDate,1
+		createDate,
 		customerId,
 		SUM( money ) incomeAnomalyCost,
 	CASE
