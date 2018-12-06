@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "orderReport")
+//@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "orderReport")
 public class OrderReportServiceImpl implements OrderReportService {
 
     @Autowired
@@ -53,7 +53,7 @@ public class OrderReportServiceImpl implements OrderReportService {
      */
 
     @Override
-    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+//    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(OrderReportDto orderReportDto) {
         String day = orderReportDto.getReportTime();
@@ -76,7 +76,7 @@ public class OrderReportServiceImpl implements OrderReportService {
      */
     @Override
     @Async
-    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+//    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(OrderReportDto orderReportDto) {
         String day = orderReportDto.getReportTime();
@@ -98,7 +98,7 @@ public class OrderReportServiceImpl implements OrderReportService {
      */
 
     @Override
-    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+//    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(OrderReportDto orderReportDto) {
         String month = orderReportDto.getReportTime();
@@ -122,7 +122,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 
     @Override
     @Async
-    @CacheEvict(cacheNames = "orderReport", allEntries = true)
+//    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(OrderReportDto orderReportDto) {
         String month = orderReportDto.getReportTime();
