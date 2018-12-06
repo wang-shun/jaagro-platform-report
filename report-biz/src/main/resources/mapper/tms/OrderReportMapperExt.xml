@@ -56,7 +56,7 @@
 
                 UNION
                 -- 订单总数
-                SELECT createDate,dept, type,
+                SELECT createDate,dept,CASE WHEN type=1 then 1 when type=2 then 2 when type in(3,4,5,6)  then 3 end as type,
                         ordertotal,0 as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
                     SELECT
                         date_format(create_time, '%Y-%m-%d') AS createDate,
