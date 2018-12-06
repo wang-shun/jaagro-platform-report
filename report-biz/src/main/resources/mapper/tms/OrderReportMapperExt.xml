@@ -34,7 +34,7 @@
                      t.waybill_id
                     FROM waybill w
                     RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-                    INNER JOIN orders ods on w.order_id = ods.id and w.enabled=1
+                    INNER JOIN orders ods on w.order_id = ods.id and w.waybill_status!='已作废' and w.enabled=1
                 )  T_AnomalyWaybillStatistics  group by createDate,dept,type
 
                 UNION
