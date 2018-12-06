@@ -180,9 +180,12 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                     for (HashMap<String, Object> result : subList) {
                         if (!result.isEmpty() && result.get("customerId") != null && result.get("goodsType") != null) {
                             HashMap<String, Integer> idMap = new HashMap<>(2);
-                            idMap.put("customerId", Integer.valueOf(result.get("customerId").toString()));
-                            idMap.put("goodsType", Integer.valueOf(result.get("goodsType").toString()));
-                            customerIdAndTypeSet.add(idMap);
+                            ShowCustomerDto showCustomerDto = customerClientService.getShowCustomerById(Integer.valueOf(result.get("customerId").toString()));
+                            if (showCustomerDto != null) {
+                                idMap.put("customerId", Integer.valueOf(result.get("customerId").toString()));
+                                idMap.put("goodsType", Integer.valueOf(result.get("goodsType").toString()));
+                                customerIdAndTypeSet.add(idMap);
+                            }
                         }
                     }
                 }
@@ -209,11 +212,12 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                         .setCreateTime(new Date())
                         .setCustomerId(customerMap.get("customerId"))
                         .setGoodsType(customerMap.get("goodsType"))
-                        .setCustomerName(customerDto == null ? null : customerDto.getCustomerName())
+                        .setCustomerName(customerDto == null ? "" : customerDto.getCustomerName())
                         .setGrossProfit(new BigDecimal(0))
                         .setIncomeAnomalyCost(new BigDecimal(0))
                         .setExpendAnomalyCost(new BigDecimal(0))
                         .setTonnage(new BigDecimal(0))
+                        .setAmount(0)
                         .setAnomalyWaybillQuantity(0)
                         .setOrderQuantity(0)
                         .setWaybillQuantity(0)
@@ -237,7 +241,7 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
                 for (HashMap<String, Object> orderCount : orderCountSet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
                         if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("orderQuantity") != null) {
-                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(orderCount.get("goodsType").toString())){
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
                                 orderDaily.setOrderQuantity(Integer.valueOf(orderCount.get("orderQuantity").toString()));
                             }
                         }
@@ -258,8 +262,10 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : waybillCountSet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("waybillQuantity") != null) {
-                            orderDaily.setWaybillQuantity(Integer.valueOf(orderCount.get("waybillQuantity").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("waybillQuantity") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setWaybillQuantity(Integer.valueOf(orderCount.get("waybillQuantity").toString()));
+                            }
                         }
                     }
                 }
@@ -278,8 +284,10 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : anomalyCountSet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("anomalyWaybillQuantity") != null) {
-                            orderDaily.setAnomalyWaybillQuantity(Integer.valueOf(orderCount.get("anomalyWaybillQuantity").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("anomalyWaybillQuantity") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setAnomalyWaybillQuantity(Integer.valueOf(orderCount.get("anomalyWaybillQuantity").toString()));
+                            }
                         }
                     }
                 }
@@ -298,11 +306,15 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : amountAndTonnSet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("amount") != null) {
-                            orderDaily.setAmount(Integer.valueOf(orderCount.get("amount").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("amount") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setAmount(Integer.valueOf(orderCount.get("amount").toString()));
+                            }
                         }
-                        if (orderCount.get("tonnage") != null) {
-                            orderDaily.setTonnage(new BigDecimal(orderCount.get("tonnage").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("tonnage") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setTonnage(new BigDecimal(orderCount.get("tonnage").toString()));
+                            }
                         }
                     }
                 }
@@ -321,8 +333,10 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : incomeAnomalySet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("incomeAnomalyCost") != null) {
-                            orderDaily.setTonnage(new BigDecimal(orderCount.get("incomeAnomalyCost").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("incomeAnomalyCost") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setTonnage(new BigDecimal(orderCount.get("incomeAnomalyCost").toString()));
+                            }
                         }
                     }
                 }
@@ -341,8 +355,10 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : expendAnomalySet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("expendAnomalyCost") != null) {
-                            orderDaily.setTonnage(new BigDecimal(orderCount.get("expendAnomalyCost").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("expendAnomalyCost") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setTonnage(new BigDecimal(orderCount.get("expendAnomalyCost").toString()));
+                            }
                         }
                     }
                 }
@@ -361,8 +377,10 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             for (CustomerOrderDaily orderDaily : customerDailySet) {
                 for (HashMap<String, Object> orderCount : grossSet) {
                     if (!CollectionUtils.isEmpty(orderCount)) {
-                        if (orderCount.get("grossProfit") != null) {
-                            orderDaily.setGrossProfit(new BigDecimal(orderCount.get("grossProfit").toString()));
+                        if (orderCount.get("customerId") != null && orderCount.get("goodsType") != null && orderCount.get("grossProfit") != null) {
+                            if (orderDaily.getCustomerId().equals(Integer.valueOf(orderCount.get("customerId").toString())) && orderDaily.getGoodsType().equals(Integer.valueOf(orderCount.get("goodsType").toString()))) {
+                                orderDaily.setGrossProfit(new BigDecimal(orderCount.get("grossProfit").toString()));
+                            }
                         }
                     }
                 }
