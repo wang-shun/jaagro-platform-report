@@ -315,14 +315,12 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> loadTotalAndPunctuality : loadTotalAndPunctualityList) {
                     if (!CollectionUtils.isEmpty(loadTotalAndPunctuality)) {
-                        if (loadTotalAndPunctuality.get("total") != null && loadTotalAndPunctuality.get("punctuality") != null) {
-                            String total = loadTotalAndPunctuality.get("total").toString();
-                            if (!total.equals("0")) {
-                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("punctuality").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
-                            } else {
-                                orderDaily.setLoadPunctualityRate(new BigDecimal("0"));
+                        if (loadTotalAndPunctuality.get("punctuality") != null) {
+                            String punctuality = loadTotalAndPunctuality.get("punctuality").toString();
+                            Integer receiveWaybillQuantity = orderDaily.getReceiveWaybillQuantity();
+                            if (receiveWaybillQuantity != null && receiveWaybillQuantity > 0){
+                                orderDaily.setLoadPunctualityRate(new BigDecimal(punctuality).divide(new BigDecimal(receiveWaybillQuantity.toString()),2,BigDecimal.ROUND_HALF_UP));
                             }
-
                         }
                     }
                 }

@@ -61,20 +61,18 @@
     </select>
     <select id="listLoadTotalAndPunctuality" resultType="java.util.HashMap">
         SELECT
-        t.driver_id,
-        count(1) total,
+        t.driver_id driver_id,
         sum(t.punctuality) punctuality
         FROM
-        ( SELECT w.driver_id AS driver_id,
-        ( CASE WHEN wt.create_time &lt; w.load_time
-        THEN 1 ELSE 0 END ) AS punctuality
-        FROM waybill w
-        LEFT JOIN waybill_tracking wt
-        ON w.id = wt.waybill_id
-        AND w.driver_id = wt.driver_id
-        WHERE wt.new_status = '待装货'
-        AND w.load_time BETWEEN #{beginDate} AND #{endDate} ) AS t
-        GROUP BY t.driver_id
+        (SELECT wt.driver_id AS driver_id,
+        ( CASE WHEN wt.create_time &lt;= w.load_time THEN 1 ELSE 0 END ) AS punctuality
+         FROM waybill w INNER JOIN waybill_tracking wt
+         ON w.id = wt.waybill_id
+         AND w.enabled = 1
+         WHERE wt.new_status = '待装货'
+         AND wt.create_time
+         BETWEEN #{beginDate} AND #{endDate}) AS t
+         GROUP BY t.driver_id
     </select>
     <select id="listAnomalyCost" resultType="java.util.HashMap">
         SELECT
