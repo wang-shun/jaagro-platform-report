@@ -18,7 +18,7 @@ public class ReportTaskDto implements Serializable {
      * 1-司机 2-客户  3-订单数据 4-运单费用
      */
     public Integer taskType;
-    /**
+    /**1
      * 1-日报表 2-月报表
      */
     public Integer dateType;
