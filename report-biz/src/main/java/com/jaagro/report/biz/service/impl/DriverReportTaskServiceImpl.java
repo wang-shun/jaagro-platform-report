@@ -34,7 +34,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
+//@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverReportTaskServiceImpl implements DriverReportTaskService {
     @Autowired
     private DriverReportMapperExt driverReportMapperExt;
@@ -53,7 +53,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param day yyyy-MM-dd
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(String day) {
         log.info("O createDailyReport day={}", day);
@@ -66,7 +66,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      * @param month yyyy-MM
      */
     @Override
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReport(String month) {
         log.info("O createMonthlyReport month={}", month);
@@ -80,7 +80,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReportAsync(String day) {
         log.info("O createDailyReportAsync day={}", day);
@@ -94,7 +94,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
      */
     @Override
     @Async("reportExecutor")
-    @CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
+    //@CacheEvict(cacheNames = "driverOrderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createMonthlyReportAsync(String month) {
         log.info("O createMonthlyReportAsync month={}", month);
@@ -318,7 +318,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
                         if (loadTotalAndPunctuality.get("total") != null && loadTotalAndPunctuality.get("punctuality") != null) {
                             String total = loadTotalAndPunctuality.get("total").toString();
                             if (!total.equals("0")) {
-                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("total").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
+                                orderDaily.setLoadPunctualityRate(new BigDecimal(loadTotalAndPunctuality.get("punctuality").toString()).divide(new BigDecimal(total.toString()), 4, BigDecimal.ROUND_HALF_UP));
                             } else {
                                 orderDaily.setLoadPunctualityRate(new BigDecimal("0"));
                             }
