@@ -24,6 +24,7 @@
          AND t.audit_status = '已通过'
          AND t.audit_time BETWEEN #{beginDate} AND #{endDate}
          AND w.driver_id IS NOT NULL
+         AND w.enabled = 1
          GROUP BY w.driver_id
     </select>
     <select id="listCompleteCount" resultType="java.util.HashMap">
@@ -33,6 +34,7 @@
         from waybill w
         where w.waybill_status = '已完成'
         AND w.modify_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
         GROUP BY driver_id
     </select>
     <select id="listAvgRecDuration" resultType="java.util.HashMap">
@@ -91,6 +93,7 @@
         AND wfa.relevance_type = 2
         AND driver_id IS NOT NULL
         AND wa.audit_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
         GROUP BY w.driver_id
     </select>
 </mapper>
