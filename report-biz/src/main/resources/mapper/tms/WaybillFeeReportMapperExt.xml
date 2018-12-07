@@ -36,23 +36,36 @@
         SELECT createDate,dept,type,0 AS anomalyTotal,0 AS waybillTotal,SUM(chknQuantity + pigQuantity) AS QuatityTotal,
         SUM(chknWeight + FodderWeight) AS WeightTotal ,0 AS incomeAnomalyFee,0 AS expendAnomalyFee FROM(
         SELECT
-        SUM( CASE WHEN o.goods_type=1 THEN og.goods_quantity ELSE 0 END) as chknQuantity,
+        0 AS chknQuantity,
         SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as chknWeight,
         SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as FodderWeight,
         SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
         date_format(w.create_time, '%Y-%m-%d') AS createDate,
         w.department_id AS dept,
-        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6) THEN 3 END AS type,
-        g.waybill_id
+        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6) THEN 3 END AS type
         FROM waybill w
         INNER JOIN orders o on w.order_id=o.id
-        INNER JOIN order_goods og on og.order_id=o.id
         INNER JOIN waybill_goods g ON w.id = g.waybill_id
         WHERE w.waybill_status='已完成' AND w.enabled=1
         <if test="day!=null">
             AND date_format(w.create_time, '%Y-%m-%d')=#{day}
         </if>
         GROUP BY createDate,dept,type,waybill_id
+        UNION
+        SELECT
+        SUM( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+        0 chknWeight,	-- 1 羽（毛鸡） 卸货重量
+        0 FodderWeight,	-- 2 吨（饲料） 卸货重量
+        0 AS pigQuantity,	-- 3 头（猪）   卸货数量
+        date_format(o.create_time, '%Y-%m-%d') AS createDate,
+        o.department_id AS dept,
+        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
+        FROM order_goods g LEFT JOIN orders o on g.order_id=o.id
+        WHERE o.order_status!='取消'
+        <if test="day!=null">
+            AND date_format(o.create_time, '%Y-%m-%d')=#{day}
+        </if>
+        GROUP BY createDate,dept,type
         ) T_QuatityTotalWeightTotalStatistics GROUP BY createDate,dept,type
 
         UNION ALL
