@@ -242,11 +242,13 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> recAndRef : recAndRefList) {
                     if (!CollectionUtils.isEmpty(recAndRef)) {
-                        if (recAndRef.get("receive_waybill_quantity") != null) {
-                            orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("receive_waybill_quantity").toString()));
-                        }
-                        if (recAndRef.get("refuse_waybill_quantity") != null) {
-                            orderDaily.setRefuseWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
+                        if (orderDaily.getDriverId().equals(recAndRef.get("driver_id"))){
+                            if (recAndRef.get("receive_waybill_quantity") != null) {
+                                orderDaily.setReceiveWaybillQuantity(Integer.valueOf(recAndRef.get("receive_waybill_quantity").toString()));
+                            }
+                            if (recAndRef.get("refuse_waybill_quantity") != null) {
+                                orderDaily.setRefuseWaybillQuantity(Integer.valueOf(recAndRef.get("refuse_waybill_quantity").toString()));
+                            }
                         }
                     }
                 }
@@ -259,8 +261,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> anomalyCost : anomalyCostList) {
                     if (!CollectionUtils.isEmpty(anomalyCost)) {
-                        if (anomalyCost.get("anomaly_cost") != null) {
-                            orderDaily.setAnomalyCost(new BigDecimal(anomalyCost.get("anomaly_cost").toString()));
+                        if (orderDaily.getDriverId().equals(anomalyCost.get("driver_id"))){
+                            if (anomalyCost.get("anomaly_cost") != null) {
+                                orderDaily.setAnomalyCost(new BigDecimal(anomalyCost.get("anomaly_cost").toString()));
+                            }
                         }
                     }
                 }
@@ -273,8 +277,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> anomalyCount : anomalyCountList) {
                     if (!CollectionUtils.isEmpty(anomalyCount)) {
-                        if (anomalyCount.get("anomaly_waybill_quantity") != null) {
-                            orderDaily.setAnomalyWaybillQuantity(Integer.valueOf(anomalyCount.get("anomaly_waybill_quantity").toString()));
+                        if (orderDaily.getDriverId().equals(anomalyCount.get("driver_id"))){
+                            if (anomalyCount.get("anomaly_waybill_quantity") != null) {
+                                orderDaily.setAnomalyWaybillQuantity(Integer.valueOf(anomalyCount.get("anomaly_waybill_quantity").toString()));
+                            }
                         }
                     }
                 }
@@ -287,9 +293,11 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> avgRecDuration : avgRecDurationList) {
                     if (!CollectionUtils.isEmpty(avgRecDuration)) {
-                        if (avgRecDuration.get("avg_receive_duration") != null) {
-                            BigDecimal avgReceiveDuration = new BigDecimal(avgRecDuration.get("avg_receive_duration").toString());
-                            orderDaily.setAvgReceiveDuration(avgReceiveDuration.divide(new BigDecimal("60"), 2, BigDecimal.ROUND_HALF_UP));
+                        if (orderDaily.getDriverId().equals(avgRecDuration.get("driver_id"))){
+                            if (avgRecDuration.get("avg_receive_duration") != null) {
+                                BigDecimal avgReceiveDuration = new BigDecimal(avgRecDuration.get("avg_receive_duration").toString());
+                                orderDaily.setAvgReceiveDuration(avgReceiveDuration.divide(new BigDecimal("60"), 2, BigDecimal.ROUND_HALF_UP));
+                            }
                         }
                     }
                 }
@@ -302,8 +310,10 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> completeCount : completeCountList) {
                     if (!CollectionUtils.isEmpty(completeCount)) {
-                        if (completeCount.get("complete_waybill_quantity") != null) {
-                            orderDaily.setCompleteWaybillQuantity(Integer.valueOf(completeCount.get("complete_waybill_quantity").toString()));
+                        if (orderDaily.getDriverId().equals(completeCount.get("driver_id"))){
+                            if (completeCount.get("complete_waybill_quantity") != null) {
+                                orderDaily.setCompleteWaybillQuantity(Integer.valueOf(completeCount.get("complete_waybill_quantity").toString()));
+                            }
                         }
                     }
                 }
@@ -316,11 +326,13 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             for (DriverOrderDaily orderDaily : driverOrderDailySet) {
                 for (HashMap<String, Object> loadTotalAndPunctuality : loadTotalAndPunctualityList) {
                     if (!CollectionUtils.isEmpty(loadTotalAndPunctuality)) {
-                        if (loadTotalAndPunctuality.get("punctuality") != null) {
-                            String punctuality = loadTotalAndPunctuality.get("punctuality").toString();
-                            Integer receiveWaybillQuantity = orderDaily.getReceiveWaybillQuantity();
-                            if (receiveWaybillQuantity != null && receiveWaybillQuantity > 0){
-                                orderDaily.setLoadPunctualityRate(new BigDecimal(punctuality).divide(new BigDecimal(receiveWaybillQuantity.toString()),2,BigDecimal.ROUND_HALF_UP));
+                        if (orderDaily.getDriverId().equals(loadTotalAndPunctuality.get("driver_id"))){
+                            if (loadTotalAndPunctuality.get("punctuality") != null) {
+                                String punctuality = loadTotalAndPunctuality.get("punctuality").toString();
+                                Integer receiveWaybillQuantity = orderDaily.getReceiveWaybillQuantity();
+                                if (receiveWaybillQuantity != null && receiveWaybillQuantity > 0){
+                                    orderDaily.setLoadPunctualityRate(new BigDecimal(punctuality).divide(new BigDecimal(receiveWaybillQuantity.toString()),2,BigDecimal.ROUND_HALF_UP));
+                                }
                             }
                         }
                     }
