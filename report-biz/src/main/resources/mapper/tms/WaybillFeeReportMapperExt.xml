@@ -59,8 +59,8 @@
         0 AS pigQuantity,	-- 3 头（猪）   卸货数量
         date_format(o.create_time, '%Y-%m-%d') AS createDate,
         o.department_id AS dept,
-        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
-        FROM order_goods g LEFT JOIN orders o on g.order_id=o.id
+        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6)  THEN 3 END AS type
+        FROM order_goods g LEFT JOIN orders o ON g.order_id=o.id
         WHERE o.order_status!='取消'
         <if test="day!=null">
             AND date_format(o.create_time, '%Y-%m-%d')=#{day}
