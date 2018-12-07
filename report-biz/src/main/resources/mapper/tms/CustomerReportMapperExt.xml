@@ -43,28 +43,31 @@
 			createDate,
 			customerId,
 			waybillQuantity,
-		CASE
-			WHEN goodsType = 1 THEN 1
-			WHEN goodsType = 2 THEN 2
-			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+			goodsType
 		FROM
 			(
 			SELECT
 				count( 1 ) AS waybillQuantity,
 				o.customer_id AS customerId,
-				o.goods_type AS goodsType,
+				(
+					CASE
+					WHEN o.goods_type IN (1, 2) THEN goods_type
+					WHEN o.goods_type IN (3, 4, 5, 6) THEN 3
+					ELSE o.goods_type
+					END
+				) AS goodsType,
 				date_format( w.create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				waybill w
 				INNER JOIN orders o ON w.order_id = o.id
 			WHERE
-			w.enabled=1
-			and
-			w.create_time BETWEEN #{beginDate} AND #{endDate}
+			w.enabled = 1
+			AND o.order_status != '取消'
+			AND w.create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				createDate,
 				customerId,
-			goodsType
+				goodsType
 		) temp_waybill
     </select>
     <select id="listAnomalyCount" resultType="java.util.HashMap">
