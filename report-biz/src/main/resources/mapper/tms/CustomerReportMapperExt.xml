@@ -7,14 +7,9 @@
 			customerId,
 			orderQuantity,
 		CASE
-
-			WHEN type = 1 THEN
-			1
-			WHEN type = 2 THEN
-			2
-			WHEN type IN ( 3, 4, 5, 6 ) THEN
-			3
-			END AS goodsType
+			WHEN type = 1 THEN 1
+			WHEN type = 2 THEN 2
+			WHEN type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
 		FROM
 			(
 			SELECT
@@ -32,6 +27,8 @@
 				date_format( create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				orders
+			WHERE order_status!='取消'
+			and create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				customerId,
 				type,
@@ -97,7 +94,7 @@
 				createDate
 	</select>
     <select id="listAmmountAndTonn" resultType="java.util.HashMap">
-		SELECT
+SELECT
 			createDate,
 			customerId,
 			goodsType,
@@ -106,9 +103,9 @@
 		FROM
 			(
 				SELECT
-					sum( CASE  WHEN o.goods_type=1 THEN og.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
-                	sum( CASE WHEN o.goods_type=1 THEN wg.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
-                	sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 3 吨（饲料） 卸货重量
+					0 as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+					sum( CASE WHEN o.goods_type=1 THEN wg.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
+					sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 3 吨（饲料） 卸货重量
 					sum( CASE when o.goods_type in(3,4,5,6) THEN wg.unload_quantity ELSE 0 END) as pigQuantity,	-- 2 头（猪）   卸货数量
 					date_format( w.create_time, '%Y-%m-%d' ) AS createDate,
 					o.customer_id AS customerId,
@@ -119,7 +116,6 @@
 				FROM
 					waybill w
 					INNER JOIN orders o ON w.order_id = o.id
-					INNER JOIN order_goods og on og.order_id=o.id
 					INNER JOIN waybill_goods wg ON w.id = wg.waybill_id
 				WHERE
 					w.waybill_status = '已完成'
@@ -129,6 +125,28 @@
 					customerId,
 					goodsType,
 					createDate
+				UNION
+					SELECT
+						sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+						0 as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
+						0 as  FodderWeight,	-- 3 吨（饲料） 卸货重量
+						0 as pigQuantity,	-- 2 头（猪）   卸货数量
+						date_format(o.create_time, '%Y-%m-%d' ) AS createDate,
+						o.customer_id AS customerId,
+					CASE
+						WHEN o.goods_type = 1 THEN 1
+						WHEN o.goods_type = 2 THEN 2
+						WHEN o.goods_type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+					FROM
+					 order_goods g
+					LEFT JOIN orders o ON g.order_id=o.id
+          			  where
+						o.order_status!='取消'
+						and o.create_time BETWEEN #{beginDate} AND #{endDate}
+					GROUP BY
+						customerId,
+						goodsType,
+						createDate
 					) temp_quantity
 		GROUP BY
 			customerId,
