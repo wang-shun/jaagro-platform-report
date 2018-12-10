@@ -319,6 +319,7 @@ SELECT
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
@@ -340,6 +341,7 @@ SELECT
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) temp_AnomalyCost
 		GROUP BY
@@ -377,6 +379,7 @@ SELECT
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
@@ -398,6 +401,7 @@ SELECT
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) T_ExpendAnomalyFeeTotalStatistics
 		GROUP BY
