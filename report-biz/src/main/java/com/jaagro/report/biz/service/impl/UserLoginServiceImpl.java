@@ -3,9 +3,9 @@ package com.jaagro.report.biz.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.jaagro.report.api.dto.UserLoginCriteriaDto;
 import com.jaagro.report.api.dto.UserLoginDto;
+import com.jaagro.report.api.entity.UserLogin;
 import com.jaagro.report.api.service.UserLoginService;
 import com.jaagro.report.biz.config.RabbitMqConfig;
-import com.jaagro.report.api.entity.UserLogin;
 import com.jaagro.report.biz.mapper.report.UserLoginMapperExt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -44,7 +44,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                     .setLoginDate(new Date());
             int result = userLoginMapper.insertSelective(userLogin);
             if (result < 1) {
-                log.warn("createUserLogin failed：{}", userLoginDto);
+                log.warn("O createUserLogin: createUserLogin failed：{}", userLoginDto);
             }
         }
     }
@@ -75,6 +75,13 @@ public class UserLoginServiceImpl implements UserLoginService {
      */
     @Override
     public UserLoginDto getUserLoginById(int id) {
+        UserLogin userLogin = userLoginMapper.selectByPrimaryKey(id);
+        if (null == userLogin) {
+            throw new NullPointerException(id + ": id does not exist");
+        }
+        UserLoginDto userLoginDto = new UserLoginDto();
+        BeanUtils.copyProperties(userLogin, userLoginDto);
+
         return null;
     }
 
