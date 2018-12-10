@@ -45,17 +45,16 @@
 					CASE
 					WHEN o.goods_type IN (1, 2) THEN goods_type
 					WHEN o.goods_type IN (3, 4, 5, 6) THEN 3
-					ELSE o.goods_type
-					END
+					ELSE o.goods_type END
 				) AS goodsType,
 				date_format( w.create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				waybill w
 				INNER JOIN orders o ON w.order_id = o.id
 			WHERE
-			w.enabled = 1
-			AND o.order_status != '取消'
-			AND w.create_time BETWEEN #{beginDate} AND #{endDate}
+				w.enabled = 1
+				AND o.order_status != '取消'
+				AND w.create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				createDate,
 				customerId,
@@ -114,7 +113,7 @@ SELECT
 					INNER JOIN waybill_goods wg ON w.id = wg.waybill_id
 				WHERE
 					w.waybill_status = '已完成'
-					and w.enabled=1
+					AND w.enabled=1
 					and w.create_time BETWEEN #{beginDate} AND #{endDate}
 				GROUP BY
 					customerId,
@@ -377,8 +376,8 @@ SELECT
 		UNION ALL
 			SELECT DISTINCT
 				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
-				ods.customer_id AS customerId,
 				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
 				wfa.adjust_type adjustType,
 				wtf.money
 			FROM
