@@ -177,6 +177,7 @@ SELECT
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
@@ -198,6 +199,7 @@ SELECT
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 		) temp_AnomalyCost
 	GROUP BY
@@ -209,6 +211,7 @@ SELECT
 		SELECT
 			createDate,
 			customerId,
+			goodsType,
 			SUM( money ) expendAnomalyCost,
 		CASE
 			WHEN goodsType = 1 THEN 1
@@ -235,12 +238,13 @@ SELECT
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
 				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
-				ods.customer_id AS customerId,
 				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
 				wfa.adjust_type adjustType,
 				wtf.money
 			FROM
@@ -256,6 +260,7 @@ SELECT
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) T_ExpendAnomalyFeeTotalStatistics
 		GROUP BY
