@@ -40,7 +40,7 @@
         SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as chknWeight,
         SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as FodderWeight,
         SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
-        date_format(w.create_time, '%Y-%m-%d') AS createDate,
+        date_format(w.modify_time, '%Y-%m-%d') AS createDate,
         w.department_id AS dept,
         CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6) THEN 3 END AS type
         FROM waybill w
@@ -50,7 +50,7 @@
         <if test="day!=null">
             AND date_format(w.create_time, '%Y-%m-%d')=#{day}
         </if>
-        GROUP BY createDate,dept,type,waybill_id
+        GROUP BY createDate,dept,type
         UNION
         SELECT
         SUM( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
@@ -104,7 +104,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND
+        WHERE w.enabled=1 AND w.waybill_status!='已作废' AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND
         relevance_type=1 AND
         wfa.adjust_type=3
         UNION ALL
@@ -120,7 +120,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND
+        WHERE w.enabled=1  AND w.waybill_status!='已作废' AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND
         relevance_type=2 AND
         wfa.adjust_type=3
         ) T_IncomeAnomalyFeeTotalStatistics
@@ -146,7 +146,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_customer_fee wcf ON (wa.id=wcf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wcf.id=wfa.relevance_id)
-        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND
+        WHERE w.enabled=1  AND w.waybill_status!='已作废' AND wa.audit_status='已通过' AND wcf.money >0 AND wfa.enabled=1 AND wcf.enabled=1 AND
         relevance_type=1 AND  wfa.adjust_type=4
         UNION ALL
         SELECT DISTINCT
@@ -161,7 +161,7 @@
         RIGHT JOIN waybill_anomaly wa ON w.id = wa.waybill_id
         INNER JOIN waybill_truck_fee wtf ON (wa.id=wtf.anomaly_id)
         INNER JOIN waybill_fee_adjustment wfa ON (wtf.id=wfa.relevance_id)
-        WHERE w.enabled=1 AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND
+        WHERE w.enabled=1  AND w.waybill_status!='已作废' AND wa.audit_status='已通过' AND wtf.money >0 AND wfa.enabled=1 AND wtf.enabled=1 AND
         relevance_type=2 AND  wfa.adjust_type=4
         ) T_ExpendAnomalyFeeTotalStatistics
         <if test="day!=null">
