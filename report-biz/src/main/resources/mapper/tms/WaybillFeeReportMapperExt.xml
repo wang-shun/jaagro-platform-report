@@ -68,7 +68,7 @@
         GROUP BY createDate,dept,type
         ) T_QuatityTotalWeightTotalStatistics GROUP BY createDate,dept,type
 
-        UNION ALL
+        UNION
         -- 异常单数统计
         SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type,
         COUNT(1) AS anomalyTotal ,0 AS waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS
@@ -93,7 +93,7 @@
         anomalyTotal,0 AS waybillTotal,
         0 AS QuatityTotal,0 AS WeightTotal ,SUM(money) incomeAnomalyFee, 0 AS expendAnomalyFee FROM (
         SELECT DISTINCT
-        date_format(wcf.create_time, '%Y-%m-%d') createDate,
+        date_format(wa.audit_time, '%Y-%m-%d') createDate,
         w.department_id AS dept,
         ods.goods_type AS type,
         wa.waybill_id waybillId,
@@ -109,7 +109,7 @@
         wfa.adjust_type=3
         UNION ALL
         SELECT DISTINCT
-        date_format(wtf.create_time, '%Y-%m-%d') createDate,
+        date_format(wa.audit_time, '%Y-%m-%d') createDate,
         w.department_id AS dept,
         ods.goods_type AS type,
         wa.waybill_id waybillId,
@@ -135,7 +135,7 @@
         anomalyTotal,0 AS waybillTotal,
         0 AS QuatityTotal,0 AS WeightTotal,0 AS incomeAnomalyFee,SUM(money) expendAnomalyFee FROM (
         SELECT DISTINCT
-        date_format(wcf.create_time, '%Y-%m-%d') createDate,
+        date_format(wa.audit_time, '%Y-%m-%d') createDate,
         w.department_id AS dept,
         ods.goods_type AS type,
         wa.waybill_id waybillId,
@@ -150,7 +150,7 @@
         relevance_type=1 AND  wfa.adjust_type=4
         UNION ALL
         SELECT DISTINCT
-        date_format(wtf.create_time, '%Y-%m-%d') createDate,
+        date_format(wa.audit_time, '%Y-%m-%d') createDate,
         w.department_id AS dept,
         ods.goods_type AS type,
         wa.waybill_id waybillId,
