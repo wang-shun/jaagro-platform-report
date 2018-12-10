@@ -4,6 +4,7 @@ import com.jaagro.report.api.constant.ReportDateType;
 import com.jaagro.report.api.constant.ReportTaskType;
 import com.jaagro.report.api.dto.OrderReportDto;
 import com.jaagro.report.api.dto.ReportTaskDto;
+import com.jaagro.report.api.service.CustomerReportTaskService;
 import com.jaagro.report.api.service.DriverReportTaskService;
 import com.jaagro.report.api.service.OrderReportService;
 import com.jaagro.report.api.service.WaybillFeeReportTaskService;
@@ -32,6 +33,8 @@ public class ReportTaskConsumeService {
     private OrderReportService orderReportService;
     @Autowired
     private WaybillFeeReportTaskService waybillFeeReportTaskService;
+    @Autowired
+    private CustomerReportTaskService customerReportTaskService;
 
 
     @RabbitListener(queues = RabbitMqConfig.REPORT_SEND_QUEUE)
@@ -48,7 +51,12 @@ public class ReportTaskConsumeService {
                 driverReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(), -1)));
             }
         } else if (ReportTaskType.CUSTOMER.equals(reportTaskDto.getTaskType())) {
-
+            if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
+                customerReportTaskService.createDailyReport(day.format(DateUtils.addDays(new Date(), -1)));
+            }
+            if (ReportDateType.MONTHLY.equals(reportTaskDto.getDateType())) {
+                customerReportTaskService.createMonthlyReport(month.format(DateUtils.addDays(new Date(), -1)));
+            }
         } else if (ReportTaskType.ORDER.equals(reportTaskDto.getTaskType())) {
             if (ReportDateType.DAILY.equals(reportTaskDto.getDateType())) {
                 OrderReportDto orderReportDto = new OrderReportDto();
