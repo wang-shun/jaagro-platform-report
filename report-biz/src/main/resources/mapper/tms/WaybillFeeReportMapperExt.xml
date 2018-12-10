@@ -48,7 +48,7 @@
         INNER JOIN waybill_goods g ON w.id = g.waybill_id
         WHERE w.waybill_status='已完成' AND w.enabled=1
         <if test="day!=null">
-            AND date_format(w.create_time, '%Y-%m-%d')=#{day}
+            AND date_format(w.modify_time, '%Y-%m-%d')=#{day}
         </if>
         GROUP BY createDate,dept,type
         UNION
@@ -81,7 +81,7 @@
         FROM waybill w
         RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
         INNER JOIN orders ods ON w.order_id = ods.id
-        WHERE w.enabled=1 AND t.processing_status!='已作废'
+        WHERE w.enabled=1 AND t.processing_status!='已作废' AND w.waybill_status!='已作废'
         <if test="day!=null">
             AND date_format(t.create_time, '%Y-%m-%d')=#{day}
         </if>
