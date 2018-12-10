@@ -69,30 +69,31 @@
     <select id="listByBeginAndEndTime" parameterType="java.lang.String"
             resultType="com.jaagro.report.api.entity.CustomerOrderMonthly">
         SELECT
-            SUBSTR( report_time, 1, 7 ) AS reportTime,
-            id,
-            customer_id AS customerId,
-            customer_name AS customerName,
-            SUM(order_quantity) as orderQuantity,
-            SUM(waybill_quantity) AS waybillQuantity,
-            SUM(anomaly_waybill_quantity) AS anomalyWaybillQuantity,
-            goods_type AS goodsType,
-            SUM(amount) AS amount,
-            SUM(tonnage) AS tonnage,
-            SUM(income_freight) AS incomeFreight,
-            SUM(income_anomaly_cost) AS incomeAnomalyCost,
-            SUM(expend_freight) AS expendFreight,
-            SUM(expend_anomaly_cost) AS expendAnomalyCost,
-            SUM(gross_profit) AS grossProfit,
-            SUM(gross_profit_rate) AS grossProfitRate
+            SUBSTR( report_time, 1, 7 ) AS report_time,
+            customer_id AS customer_id,
+            customer_name AS customer_name,
+            SUM( order_quantity ) AS order_quantity,
+            SUM( waybill_quantity ) AS waybill_quantity,
+            SUM( anomaly_waybill_quantity ) AS anomaly_waybill_quantity,
+            goods_type AS goods_type,
+            SUM( amount ) AS amount,
+            SUM( tonnage ) AS tonnage,
+            SUM( income_freight ) AS income_freight,
+            SUM( income_anomaly_cost ) AS income_anomaly_cost,
+            SUM( expend_freight ) AS expend_freight,
+            SUM( expend_anomaly_cost ) AS expend_anomaly_cost,
+            SUM( gross_profit ) AS gross_profit,
+            SUM( gross_profit_rate ) AS gross_profit_rate
         FROM
             customer_order_daily
+        WHERE
+            enabled = 1
+            AND report_time BETWEEN #{beginMonth}
+            AND #{endMonth}
         GROUP BY
-            customerId,
-            goodsType,
-            SUBSTR( reportTime, 1, 7 ),
-            customerName,
-            id
-        ORDER BY reportTime DESC
+            customer_id,
+            goods_type,
+            SUBSTR( report_time, 1, 7 ),
+            customer_name
     </select>
 </mapper>
