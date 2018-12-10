@@ -35,14 +35,8 @@ public class Test {
     }
 
     public static void main(String args[]) {
-        Integer a = 244;
-        Object b = "244";
-
-        Integer c = 1;
-        Object d = "1";
-        if (c.equals(Integer.valueOf(d.toString()))) {
-            System.err.println(c.equals(Integer.valueOf(d.toString())));
-        }
-        System.err.println(a.equals(Integer.valueOf(b.toString())));
+        String reportTime = "2018-12-01 06:23:08";
+        reportTime = reportTime.substring(0, 10);
+        System.err.println(reportTime);
     }
 }
