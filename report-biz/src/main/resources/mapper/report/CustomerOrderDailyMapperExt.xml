@@ -87,9 +87,7 @@
         FROM
             customer_order_daily
         WHERE
-            1 = 1
-            AND report_time BETWEEN #{beginMonth}
-            AND #{endMonth}
+            report_time BETWEEN #{beginMonth} AND #{endMonth}
         GROUP BY
             customer_id,
             goods_type,
