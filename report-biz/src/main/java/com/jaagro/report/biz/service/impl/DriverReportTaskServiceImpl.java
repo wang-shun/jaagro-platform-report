@@ -119,7 +119,7 @@ public class DriverReportTaskServiceImpl implements DriverReportTaskService {
             List<HashMap<String, Object>> completeCountList = driverReportMapperExt.listCompleteCount(beginDate, endDate);
             // 装货总运单量,准时数
             List<HashMap<String, Object>> loadTotalAndPunctualityList = driverReportMapperExt.listLoadTotalAndPunctuality(beginDate, endDate);
-            // TODO 公里数 运费 费用合计
+//             TODO 公里数 运费 费用合计
             // 合并查询结果集
             unionListToDailySet(driverIdSet, recAndRefList, anomalyCostList, anomalyCountList, avgRecDurationList, completeCountList, loadTotalAndPunctualityList);
             // 初始化日报表

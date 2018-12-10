@@ -38,7 +38,6 @@ public interface UserClientService {
     @GetMapping("/getDeptNameById/{id}")
     String getDeptNameById(@PathVariable("id") Integer id);
 
-
     @PostMapping("/getAllDepartments")
     List<DepartmentReturnDto> getAllDepartments();
 
