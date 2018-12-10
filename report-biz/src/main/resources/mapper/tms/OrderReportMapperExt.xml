@@ -38,55 +38,78 @@
                 )  T_AnomalyWaybillStatistics  group by createDate,dept,type
 
                 UNION
-                -- 运单总数，完成单数
+                -- 运单总数
                 SELECT createDate,dept,CASE WHEN type=1 then 1 when type=2 then 2 when type in(3,4,5,6)  then 3 end as type,
-                    0 as ordertotal,0 as anomalyTotal,0 as refusedTotal,waybillTotal,waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
+                    0 as ordertotal,0 as anomalyTotal,0 as refusedTotal,waybillTotal,
+                    0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal
+                from(
                     SELECT
                         date_format(w.create_time, '%Y-%m-%d') AS createDate,
                         w.department_id AS dept,
                         ods.goods_type AS type,
-                        count(1) as waybillTotal,
-                        sum( CASE waybill_status WHEN '已完成' THEN 1 ELSE 0 END) as waybillFinishTotal
-                    FROM
-                        waybill w
-                    INNER JOIN orders ods
-                     on w.order_id = ods.id
-                     where w.enabled=1 group by createDate,dept,type
+                        count(1) as waybillTotal
+                    FROM waybill w INNER JOIN orders ods on w.order_id = ods.id where w.enabled=1 group by createDate,dept,type
                 ) T_WaybillStatistics
 
                 UNION
-                -- 订单总数
+                -- 运单完成单数
                 SELECT createDate,dept,CASE WHEN type=1 then 1 when type=2 then 2 when type in(3,4,5,6)  then 3 end as type,
+                      0 as ordertotal,0 as anomalyTotal,0 as refusedTotal,
+                      0 as waybillTotal,
+                      waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal
+                from(
+                      SELECT
+                          date_format(w.modify_time, '%Y-%m-%d') AS createDate,
+                          w.department_id AS dept,
+                          ods.goods_type AS type,
+                          count(1) as waybillFinishTotal
+                      FROM
+                        waybill w INNER JOIN orders ods on w.order_id = ods.id
+                        where w.enabled=1 and w.waybill_status='已完成' and  w.modify_time is not null
+                        group by createDate,dept,type
+                ) T_WaybillFinishedStatistics
+
+                UNION
+                -- 订单总数
+                SELECT createDate,dept, type,
                         ordertotal,0 as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
                     SELECT
                         date_format(create_time, '%Y-%m-%d') AS createDate,
                         department_id AS dept,
-                        goods_type AS type,
+                        CASE WHEN goods_type=1 then 1 when goods_type=2 then 2 when goods_type in(3,4,5,6)  then 3 end as type,
                         count(1) as ordertotal
-                    from orders  group by createDate,dept,type
+                    from orders where order_status!='取消' group by createDate,dept,type
                 ) T_OrderStatistics
 
                 UNION
                 -- 数量、重量统计
                 SELECT createDate,dept,type,0 as ordertotal,0 as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,
-                        sum(chknQuantity + pigQuantity) as QuatityTotal,sum(chknWeight + FodderWeight) as WeightTotal from(
-                    SELECT
-                    sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity*8 ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
-                    sum( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
-                    sum( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as  FodderWeight,	-- 3 吨（饲料） 卸货重量
-                    sum( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,	-- 2 头（猪）   卸货数量
-                     date_format(w.create_time, '%Y-%m-%d') AS createDate,
-                     w.department_id AS dept,
-                     CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type,
-                     g.waybill_id
-                    FROM
-                     waybill w
-                     inner join orders o on w.order_id=o.id
-                     inner JOIN waybill_goods g ON w.id = g.waybill_id
-                    where w.waybill_status='已完成' and w.enabled=1
-                      group by createDate,dept,type,waybill_id
+                sum(chknQuantity + pigQuantity) as QuatityTotal,sum(chknWeight + FodderWeight) as WeightTotal
+                from(
+                        SELECT
+                            0 as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+                            sum( CASE WHEN o.goods_type=1 THEN wg.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
+                            sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 2 吨（饲料） 卸货重量
+                            sum( CASE when o.goods_type in(3,4,5,6) THEN wg.unload_quantity ELSE 0 END) as pigQuantity,	-- 3 头（猪）   卸货数量
+                            date_format(w.modify_time, '%Y-%m-%d') AS createDate,
+                            w.department_id AS dept,
+                            CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
+                        FROM waybill w
+                            inner join orders o on w.order_id=o.id
+                            inner JOIN waybill_goods wg ON w.id = wg.waybill_id
+                        where w.waybill_status='已完成' and w.enabled=1  group by createDate,dept,type
+                    UNION
+                        SELECT
+                            sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+                            0 chknWeight,	-- 1 羽（毛鸡） 卸货重量
+                            0 FodderWeight,	-- 2 吨（饲料） 卸货重量
+                            0 as pigQuantity,	-- 3 头（猪）   卸货数量
+                            date_format(o.create_time, '%Y-%m-%d') AS createDate,
+                            o.department_id AS dept,
+                            CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
+                        FROM order_goods g left join orders o on g.order_id=o.id
+                        where o.order_status!='取消' group by createDate,dept,type
                 ) T_QuatityTotalWeightTotalStatistics group by createDate,dept,type
-
             )totalTable
         <where>
 

@@ -15,11 +15,15 @@
 			SELECT
 				count( 1 ) AS orderQuantity,
 				customer_id AS customerId,
-				goods_type AS type,
+			CASE
+					WHEN goods_type = 1 THEN 1
+					WHEN goods_type = 2 THEN 2
+					WHEN goods_type IN ( 3, 4, 5, 6 ) THEN 3 END AS type,
 				date_format( create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				orders
-			WHERE create_time BETWEEN #{beginDate} AND #{endDate}
+			WHERE order_status!='取消'
+			AND create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				customerId,
 				type,
@@ -31,28 +35,30 @@
 			createDate,
 			customerId,
 			waybillQuantity,
-		CASE
-			WHEN goodsType = 1 THEN 1
-			WHEN goodsType = 2 THEN 2
-			WHEN goodsType IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+			goodsType
 		FROM
 			(
 			SELECT
 				count( 1 ) AS waybillQuantity,
 				o.customer_id AS customerId,
-				o.goods_type AS goodsType,
+				(
+					CASE
+					WHEN o.goods_type IN (1, 2) THEN goods_type
+					WHEN o.goods_type IN (3, 4, 5, 6) THEN 3
+					ELSE o.goods_type END
+				) AS goodsType,
 				date_format( w.create_time, '%Y-%m-%d' ) AS createDate
 			FROM
 				waybill w
 				INNER JOIN orders o ON w.order_id = o.id
 			WHERE
-			w.enabled=1
-			and
-			w.create_time BETWEEN #{beginDate} AND #{endDate}
+				w.enabled = 1
+				AND o.order_status != '取消'
+				AND w.create_time BETWEEN #{beginDate} AND #{endDate}
 			GROUP BY
 				createDate,
 				customerId,
-			goodsType
+				goodsType
 		) temp_waybill
     </select>
     <select id="listAnomalyCount" resultType="java.util.HashMap">
@@ -73,7 +79,7 @@
 				FROM
 					waybill w
 					RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-					INNER JOIN orders o ON w.order_id = o.id
+					INNER JOIN orders o ON w.order_id = o.id and w.waybill_status!='已作废'
 				WHERE t.create_time BETWEEN #{beginDate} AND #{endDate}
 			) temp_anomal
 		GROUP BY
@@ -82,7 +88,7 @@
 				createDate
 	</select>
     <select id="listAmmountAndTonn" resultType="java.util.HashMap">
-		SELECT
+SELECT
 			createDate,
 			customerId,
 			goodsType,
@@ -91,14 +97,10 @@
 		FROM
 			(
 				SELECT
-					sum( CASE WHEN o.goods_type = 1 THEN g.goods_quantity * 8 ELSE 0 END ) AS chknQuantity,
-				-- 1 羽（毛鸡） 计划数量
-					sum( CASE WHEN o.goods_type = 1 THEN g.unload_weight ELSE 0 END ) AS chknWeight,
-				-- 1 羽（毛鸡） 卸货重量
-					sum( CASE WHEN o.goods_type = 2 THEN g.unload_weight ELSE 0 END ) AS FodderWeight,
-				-- 3 吨（饲料） 卸货重量
-					sum( CASE WHEN o.goods_type IN ( 3, 4, 5, 6 ) THEN g.unload_quantity ELSE 0 END ) AS pigQuantity,
-				-- 2 头（猪）   卸货数量
+					0 as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+					sum( CASE WHEN o.goods_type=1 THEN wg.unload_weight ELSE 0 END) as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
+					sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 3 吨（饲料） 卸货重量
+					sum( CASE when o.goods_type in(3,4,5,6) THEN wg.unload_quantity ELSE 0 END) as pigQuantity,	-- 2 头（猪）   卸货数量
 					date_format( w.create_time, '%Y-%m-%d' ) AS createDate,
 					o.customer_id AS customerId,
 				CASE
@@ -108,15 +110,37 @@
 				FROM
 					waybill w
 					INNER JOIN orders o ON w.order_id = o.id
-					INNER JOIN waybill_goods g ON w.id = g.waybill_id
+					INNER JOIN waybill_goods wg ON w.id = wg.waybill_id
 				WHERE
 					w.waybill_status = '已完成'
-					and w.enabled=1
+					AND w.enabled=1
 					and w.create_time BETWEEN #{beginDate} AND #{endDate}
 				GROUP BY
 					customerId,
 					goodsType,
 					createDate
+				UNION
+					SELECT
+						sum( CASE  WHEN o.goods_type=1 THEN g.goods_quantity ELSE 0 END) as chknQuantity,	-- 1 羽（毛鸡） 计划数量
+						0 as  chknWeight,	-- 1 羽（毛鸡） 卸货重量
+						0 as  FodderWeight,	-- 3 吨（饲料） 卸货重量
+						0 as pigQuantity,	-- 2 头（猪）   卸货数量
+						date_format(o.create_time, '%Y-%m-%d' ) AS createDate,
+						o.customer_id AS customerId,
+					CASE
+						WHEN o.goods_type = 1 THEN 1
+						WHEN o.goods_type = 2 THEN 2
+						WHEN o.goods_type IN ( 3, 4, 5, 6 ) THEN 3 END AS goodsType
+					FROM
+					 order_goods g
+					LEFT JOIN orders o ON g.order_id=o.id
+          			  where
+						o.order_status!='取消'
+						and o.create_time BETWEEN #{beginDate} AND #{endDate}
+					GROUP BY
+						customerId,
+						goodsType,
+						createDate
 					) temp_quantity
 		GROUP BY
 			customerId,
@@ -153,6 +177,7 @@
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
@@ -174,6 +199,7 @@
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 		) temp_AnomalyCost
 	GROUP BY
@@ -185,6 +211,7 @@
 		SELECT
 			createDate,
 			customerId,
+			goodsType,
 			SUM( money ) expendAnomalyCost,
 		CASE
 			WHEN goodsType = 1 THEN 1
@@ -211,12 +238,13 @@
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
 				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
-				ods.customer_id AS customerId,
 				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
 				wfa.adjust_type adjustType,
 				wtf.money
 			FROM
@@ -232,6 +260,7 @@
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) T_ExpendAnomalyFeeTotalStatistics
 		GROUP BY
@@ -290,6 +319,7 @@
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
@@ -311,6 +341,7 @@
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 3
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) temp_AnomalyCost
 		GROUP BY
@@ -348,12 +379,13 @@
 				AND wcf.enabled = 1
 				AND relevance_type = 1
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wcf.create_time BETWEEN #{beginDate} AND #{endDate}
 		UNION ALL
 			SELECT DISTINCT
 				date_format( wtf.create_time, '%Y-%m-%d' ) createDate,
-				ods.customer_id AS customerId,
 				ods.goods_type AS goodsType,
+				ods.customer_id AS customerId,
 				wfa.adjust_type adjustType,
 				wtf.money
 			FROM
@@ -369,6 +401,7 @@
 				AND wtf.enabled = 1
 				AND relevance_type = 2
 				AND wfa.adjust_type = 4
+				AND w.waybill_status != "已作废"
 				AND wtf.create_time BETWEEN #{beginDate} AND #{endDate}
 			) T_ExpendAnomalyFeeTotalStatistics
 		GROUP BY

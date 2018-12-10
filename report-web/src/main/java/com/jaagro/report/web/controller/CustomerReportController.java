@@ -35,14 +35,14 @@ public class CustomerReportController {
     @PostMapping("/createCustomerDailyReport/{day}")
     public BaseResponse<String> createWaybillFeeDailyReport(@PathVariable String day) {
         customerReportTaskService.createDailyReport(day);
-        return BaseResponse.successInstance(ResponseStatusCode.OPERATION_SUCCESS.getMsg());
+        return BaseResponse.successInstance("客户日报表生成成功");
     }
 
     @ApiOperation(value = "生成客户月报表")
     @PostMapping("/createCustomerMonthReport/{month}")
     public BaseResponse<String> createWaybillFeeMonthReport(@PathVariable String month) {
         customerReportTaskService.createMonthlyReport(month);
-        return BaseResponse.successInstance(ResponseStatusCode.OPERATION_SUCCESS.getMsg());
+        return BaseResponse.successInstance("客户月报表生成成功");
     }
 
     @ApiOperation(value = "客户日报表列表")

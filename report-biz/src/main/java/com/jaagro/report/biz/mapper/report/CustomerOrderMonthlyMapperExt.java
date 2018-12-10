@@ -26,4 +26,11 @@ public interface CustomerOrderMonthlyMapperExt extends CustomerOrderMonthlyMappe
      * @param customerOrderMonthList
      */
     void batchInsert(@Param("customerOrderMonthList") List<CustomerOrderMonthly> customerOrderMonthList);
+
+    /**
+     * 物理删除当日报表数据
+     *
+     * @param reportTime
+     */
+    void deleteByReportTime(@Param("reportTime") String reportTime);
 }
