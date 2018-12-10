@@ -63,4 +63,8 @@
             )
         </foreach>
     </insert>
+    <delete id="deleteByReportTime">
+        DELETE from customer_order_monthly
+        WHERE report_time = #{reportTime}
+    </delete>
 </mapper>

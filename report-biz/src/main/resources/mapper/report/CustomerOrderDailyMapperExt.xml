@@ -82,7 +82,9 @@
             SUM(income_freight) AS incomeFreight,
             SUM(income_anomaly_cost) AS incomeAnomalyCost,
             SUM(expend_freight) AS expendFreight,
-            SUM(expend_anomaly_cost) AS expendAnomalyCost
+            SUM(expend_anomaly_cost) AS expendAnomalyCost,
+            SUM(gross_profit) AS grossProfit,
+            SUM(gross_profit_rate) AS grossProfitRate
         FROM
             customer_order_daily
         GROUP BY

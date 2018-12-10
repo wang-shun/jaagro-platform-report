@@ -60,7 +60,7 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             List<CustomerOrderMonthly> customerOrderMonthList = dailyMapperExt.listByBeginAndEndTime(month, endMonth);
             if (!CollectionUtils.isEmpty(customerOrderMonthList)) {
                 // 物理删除原有客户日报表
-                dailyMapperExt.deleteByReportTime(month);
+                monthlyMapperExt.deleteByReportTime(month);
                 for (CustomerOrderMonthly customerMonth : customerOrderMonthList) {
                     if (customerMonth != null) {
                         customerMonth.setCreateTime(new Date());
