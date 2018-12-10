@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jaagro.report.biz.mapper.report.DriverOrderMonthlyMapperExt" >
+    <delete id="deleteByReportTime">
+        DELETE
+        FROM driver_order_monthly
+        WHERE report_time = #{reportTime}
+    </delete>
+    <insert id="batchInsert" parameterType="list">
+        insert into driver_order_monthly (id, report_time, driver_name,
+        driver_id, truck_number, truck_id, mileage,
+        receive_waybill_quantity, refuse_waybill_quantity,
+        anomaly_waybill_quantity, complete_waybill_quantity,
+        avg_receive_duration, load_punctuality_rate,
+        unload_punctuality_rate, freight, anomaly_cost,
+        total_cost,modify_time)
+        values
+        <foreach collection="driverOrderMonthlyList" item="item" separator=",">
+            (#{item.id,jdbcType=INTEGER}, #{item.reportTime,jdbcType=VARCHAR}, #{item.driverName,jdbcType=VARCHAR},
+            #{item.driverId,jdbcType=INTEGER}, #{item.truckNumber,jdbcType=VARCHAR}, #{item.truckId,jdbcType=INTEGER},#{item.mileage,jdbcType=DECIMAL},
+            #{item.receiveWaybillQuantity,jdbcType=INTEGER}, #{item.refuseWaybillQuantity,jdbcType=INTEGER},
+            #{item.anomalyWaybillQuantity,jdbcType=INTEGER}, #{item.completeWaybillQuantity,jdbcType=INTEGER},
+            #{item.avgReceiveDuration,jdbcType=DECIMAL}, #{item.loadPunctualityRate,jdbcType=DECIMAL},
+            #{item.unloadPunctualityRate,jdbcType=DECIMAL}, #{item.freight,jdbcType=DECIMAL}, #{item.anomalyCost,jdbcType=DECIMAL},
+            #{item.totalCost,jdbcType=DECIMAL}, #{item.modifyTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <select id="listByCriteria" resultType="com.jaagro.report.api.entity.DriverOrderMonthly" parameterType="com.jaagro.report.api.dto.ListDriverReportCriteriaDto">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM driver_order_monthly
+        WHERE
+        1 = 1
+        <if test="reportTime != null and reportTime != ''">
+            AND report_time = #{reportTime}
+        </if>
+        <if test="truckNumber != null and truckNumber !=''">
+            <![CDATA[and (truck_number like concat(#{truckNumber},'%') )]]>
+        </if>
+        order by report_time desc
+    </select>
+
+</mapper>

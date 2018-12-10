@@ -1,13 +1,14 @@
 package com.jaagro.report.web.controller;
 
-import com.jaagro.report.api.annotation.DataSource;
-import com.jaagro.report.biz.entity.DriverOrderDaily;
-import com.jaagro.report.biz.entity.UserLogin;
-import com.jaagro.report.biz.mapper.DriverOrderDailyMapper;
-import com.jaagro.report.biz.mapper.UserLoginMapper;
+import com.jaagro.report.api.service.WaybillFeeReportTaskService;
+import com.jaagro.report.biz.mapper.report.UserLoginMapperExt;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author tony
@@ -16,14 +17,32 @@ import org.springframework.web.bind.annotation.RestController;
 public class Test {
 
     @Autowired
-    private UserLoginMapper userLoginMapper;
+    private UserLoginMapperExt userLoginMapper;
     @Autowired
-    private DriverOrderDailyMapper driverOrderDailyMapper;
+    private WaybillFeeReportTaskService waybillFeeReportTaskService;
 
-    @DataSource("tms")
     @GetMapping("/test")
-    public void test(){
-        DriverOrderDaily userLogin = driverOrderDailyMapper.selectByPrimaryKey(1);
-        System.out.println(userLogin);
+    public void test() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(sdf.format(date));
+    }
+
+    @GetMapping("/test1")
+    public void test1() {
+        //waybillFeeReportTaskService.createDailyReport(null);
+        waybillFeeReportTaskService.createMonthlyReport(null);
+    }
+
+    public static void main(String args[]) {
+        Integer a = 244;
+        Object b = "244";
+
+        Integer c = 1;
+        Object d = "1";
+        if (c.equals(Integer.valueOf(d.toString()))) {
+            System.err.println(c.equals(Integer.valueOf(d.toString())));
+        }
+        System.err.println(a.equals(Integer.valueOf(b.toString())));
     }
 }

@@ -1,9 +1,9 @@
 spring:
   application:
-    name: tms
+    name: report
 
 feignClient:
   application:
     crm: crm
     tms: tms
-    user: uaa
+    user: user

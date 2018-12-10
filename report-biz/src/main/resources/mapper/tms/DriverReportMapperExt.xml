@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jaagro.report.biz.mapper.tms.DriverReportMapperExt" >
+    <select id="listRecAndRefCount" resultType="java.util.HashMap">
+        SELECT
+         driver_id,
+         MAX( CASE new_status WHEN '待出发' THEN cnt ELSE 0 END ) receive_waybill_quantity,
+         MAX( CASE new_status WHEN '已拒单' THEN cnt ELSE 0 END ) refuse_waybill_quantity
+         FROM
+          ( SELECT driver_id, new_status, count(1) cnt FROM
+          waybill_tracking WHERE driver_id IS NOT NULL
+          AND new_status IN ('待出发', '已拒单')
+          AND create_time BETWEEN #{beginDate} AND #{endDate}
+          GROUP BY driver_id, new_status ) t
+          GROUP BY driver_id
+    </select>
+    <select id="listAnomalyCount" resultType="java.util.HashMap">
+        SELECT
+         w.driver_id,count(1) anomaly_waybill_quantity
+         FROM waybill_anomaly t
+         INNER JOIN waybill w
+         ON t.waybill_id = w.id
+         WHERE t.enabled = 1
+         AND t.processing_status = '已结束'
+         AND t.processor_time BETWEEN #{beginDate} AND #{endDate}
+         AND w.driver_id IS NOT NULL
+         AND w.enabled = 1
+         GROUP BY w.driver_id
+    </select>
+    <select id="listCompleteCount" resultType="java.util.HashMap">
+        select
+        driver_id,
+        count(1) complete_waybill_quantity
+        from waybill w
+        where w.waybill_status = '已完成'
+        AND w.modify_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
+        GROUP BY driver_id
+    </select>
+    <select id="listAvgRecDuration" resultType="java.util.HashMap">
+        SELECT
+         t.driver_id AS driver_id,
+         round(AVG(t.duration)) AS avg_receive_duration
+        FROM
+         ( SELECT A.driver_id AS driver_id,
+         A.new_status AS new_status,
+         A.create_time AS create_time,
+         TIMESTAMPDIFF( SECOND, B.create_time, A.create_time ) AS duration
+         FROM ( SELECT a.*, (@i := @i + 1) AS ord_num
+         FROM waybill_tracking a, (SELECT @i := 1) d
+         ORDER BY waybill_id, id DESC ) AS A
+         LEFT JOIN
+         ( SELECT a.*, (@j := @j + 1) AS ord_num
+         FROM waybill_tracking a, (SELECT @j := 0) c
+         ORDER BY waybill_id, id DESC ) AS B
+         ON A.ord_num = B.ord_num
+         AND A.waybill_id = B.waybill_id ) AS t
+         WHERE t.new_status = '待出发'
+         AND t.create_time BETWEEN #{beginDate} AND #{endDate}
+         GROUP BY t.driver_id
+    </select>
+    <select id="listLoadTotalAndPunctuality" resultType="java.util.HashMap">
+        SELECT
+        t.driver_id driver_id,
+        sum(t.punctuality) punctuality
+        FROM
+        (SELECT wt.driver_id AS driver_id,
+        ( CASE WHEN wt.create_time &lt;= w.load_time THEN 1 ELSE 0 END ) AS punctuality
+         FROM waybill w INNER JOIN waybill_tracking wt
+         ON w.id = wt.waybill_id
+         AND w.enabled = 1
+         WHERE wt.new_status = '待装货'
+         AND wt.create_time
+         BETWEEN #{beginDate} AND #{endDate}) AS t
+         GROUP BY t.driver_id
+    </select>
+    <select id="listAnomalyCost" resultType="java.util.HashMap">
+        SELECT
+        w.driver_id,
+        SUM( CASE WHEN wfa.adjust_type = 3 THEN wtf.money WHEN wfa.adjust_type = 4 THEN - money ELSE 0 END )
+        AS anomaly_cost
+        FROM waybill_truck_fee wtf
+        INNER JOIN waybill_anomaly wa
+        ON wtf.anomaly_id = wa.id
+        LEFT JOIN waybill_fee_adjustment wfa
+        ON wtf.id = wfa.relevance_id LEFT JOIN waybill w
+        ON wa.waybill_id = w.id
+        WHERE wtf.cost_type != 1
+        AND wtf.enabled = 1
+        AND wa.audit_status = '已通过'
+        AND wfa.relevance_type = 2
+        AND driver_id IS NOT NULL
+        AND wa.audit_time BETWEEN #{beginDate} AND #{endDate}
+        AND w.enabled = 1
+        GROUP BY w.driver_id
+    </select>
+</mapper>
