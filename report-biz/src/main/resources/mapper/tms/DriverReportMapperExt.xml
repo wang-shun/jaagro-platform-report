@@ -62,6 +62,7 @@
     <select id="listLoadTotalAndPunctuality" resultType="java.util.HashMap">
         SELECT
         t.driver_id driver_id,
+        count(1) total,
         sum(t.punctuality) punctuality
         FROM
         (SELECT wt.driver_id AS driver_id,
