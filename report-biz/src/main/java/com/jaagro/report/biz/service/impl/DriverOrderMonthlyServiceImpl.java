@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2018/11/30
  */
 @Service
-//@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
+@CacheConfig(keyGenerator = "wiselyKeyGenerator", cacheNames = "driverOrderReport")
 public class DriverOrderMonthlyServiceImpl implements DriverOrderMonthlyService {
     @Autowired
     private DriverOrderMonthlyMapperExt driverOrderMonthlyMapperExt;
@@ -28,7 +28,7 @@ public class DriverOrderMonthlyServiceImpl implements DriverOrderMonthlyService 
      * @return
      */
     @Override
-    //@Cacheable
+    @Cacheable
     public List<DriverOrderMonthly> listByCriteria(ListDriverReportCriteriaDto listDriverReportCriteriaDto) {
         return driverOrderMonthlyMapperExt.listByCriteria(listDriverReportCriteriaDto);
     }
