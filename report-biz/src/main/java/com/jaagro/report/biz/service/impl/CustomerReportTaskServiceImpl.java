@@ -14,6 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -60,7 +61,7 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
             List<CustomerOrderMonthly> customerOrderMonthList = dailyMapperExt.listByBeginAndEndTime(month, endMonth);
             if (!CollectionUtils.isEmpty(customerOrderMonthList)) {
                 // 物理删除原有客户日报表
-                dailyMapperExt.deleteByReportTime(month);
+                monthlyMapperExt.deleteByReportTime(month);
                 for (CustomerOrderMonthly customerMonth : customerOrderMonthList) {
                     if (customerMonth != null) {
                         customerMonth.setCreateTime(new Date());
@@ -82,6 +83,11 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      */
     @Override
     public List<CustomerOrderDaily> listCustomerDailyReport(ListCustomerReportCriteriaDto dto) {
+        if (!StringUtils.isEmpty(dto.getReportTime())) {
+            String subStr = dto.getReportTime();
+            subStr = subStr.substring(0, 10);
+            dto.setReportTime(subStr);
+        }
         return dailyMapperExt.listCustomerDailyByCriteria(dto);
     }
 
@@ -93,6 +99,11 @@ public class CustomerReportTaskServiceImpl implements CustomerReportTaskService 
      */
     @Override
     public List<CustomerOrderMonthly> listCustomerMonthReport(ListCustomerReportCriteriaDto dto) {
+        if (!StringUtils.isEmpty(dto.getReportTime())) {
+            String subStr = dto.getReportTime();
+            subStr = subStr.substring(0, 7);
+            dto.setReportTime(subStr);
+        }
         return monthlyMapperExt.listCustomerMonthByCriteria(dto);
     }
 
