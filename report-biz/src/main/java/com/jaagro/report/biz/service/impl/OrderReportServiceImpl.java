@@ -56,6 +56,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 //    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(OrderReportDto orderReportDto) {
+        log.info("O OrderReportServiceImpl.createDailyReport orderReportDto:{}",orderReportDto);
         String day = orderReportDto.getReportTime();
         List<DeptOrderDaily> deptOrderDailyList = new ArrayList<>();
         //1、从tms查询数据 day = '20181128'   yyyyMMdd
@@ -66,7 +67,6 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderDailyMapperExt.batchInsert(deptOrderDailyList);
         }
-        log.info("O-createDailyReport-day={}", orderReportDto);
     }
 
     /**
@@ -89,7 +89,7 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderDailyMapperExt.batchInsert(deptOrderDailyList);
         }
-        log.info("O-createDailyReportAsync-day={}", orderReportDto);
+        log.info("O OrderReportServiceImpl.createDailyReportAsync-day={}", orderReportDto);
     }
     /**
      * 生成月报表数据
@@ -111,7 +111,7 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderMonthlyMapperExt.batchInsert(deptOrderMonthlyList);
         }
-        log.info("O-createMonthlyReport-day={}", orderReportDto);
+        log.info("O OrderReportServiceImpl.createMonthlyReport-day={}", orderReportDto);
     }
 
     /**
@@ -135,11 +135,12 @@ public class OrderReportServiceImpl implements OrderReportService {
             //3、把数据保存到report表
             deptOrderMonthlyMapperExt.batchInsert(deptOrderMonthlyList);
         }
-        log.info("O-createMonthlyReportAsync-day={}", orderReportDto);
+        log.info("O OrderReportServiceImpl.createMonthlyReportAsync-day={}", orderReportDto);
     }
 
     @Override
     public List<DeptOrderDaily> getDeptOrderDailyDataListFromTms(OrderReportDto orderReportDto) {
+        log.info("S OrderReportServiceImpl.getDeptOrderDailyDataListFromTms orderReportDto:{}",orderReportDto);
         List<DeptOrderDaily> orderDailyList = orderReportMapperExt.getDeptOrderDailyDataListFromTms(orderReportDto);
         return orderDailyList;
     }
@@ -152,6 +153,7 @@ public class OrderReportServiceImpl implements OrderReportService {
      */
     @Override
     public List<DeptOrderMonthly> getOrderMonthlyDataFromOrderDaily(OrderReportDto orderReportDto) {
+        log.info("S OrderReportServiceImpl.getOrderMonthlyDataFromOrderDaily orderReportDto:{}",orderReportDto);
         return deptOrderDailyMapperExt.getOrderMonthlyDataFromOrderDaily(orderReportDto);
     }
 
@@ -159,6 +161,7 @@ public class OrderReportServiceImpl implements OrderReportService {
     @Override
 //    @Cacheable
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
+        log.info("S OrderReportServiceImpl.listOrderDailyReport dto:{}",dto);
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
             if (!CollectionUtils.isEmpty(deptIds)) {
@@ -182,6 +185,7 @@ public class OrderReportServiceImpl implements OrderReportService {
     @Override
 //    @Cacheable
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
+        log.info("S OrderReportServiceImpl.listOrderMonthlyReport dto:{}",dto);
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
             if (!CollectionUtils.isEmpty(deptIds)) {
