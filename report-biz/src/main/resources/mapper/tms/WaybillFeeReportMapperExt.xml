@@ -46,7 +46,24 @@
         FROM waybill w
         INNER JOIN orders o on w.order_id=o.id
         INNER JOIN waybill_goods g ON w.id = g.waybill_id
-        WHERE w.waybill_status='已完成' AND w.enabled=1
+        WHERE w.waybill_status='已完成' AND w.enabled=1 AND o.direct_order_flag ='n'
+        <if test="day!=null">
+            AND date_format(w.modify_time, '%Y-%m-%d')=#{day}
+        </if>
+        GROUP BY createDate,dept,type
+        UNION
+        SELECT
+        0 AS chknQuantity,
+        SUM( CASE WHEN o.goods_type=1 THEN g.unload_weight ELSE 0 END) as chknWeight,
+        SUM( CASE WHEN o.goods_type=2 THEN g.unload_weight ELSE 0 END) as FodderWeight,
+        SUM( CASE when o.goods_type in(3,4,5,6) THEN g.unload_quantity ELSE 0 END) as pigQuantity,
+        date_format(w.modify_time, '%Y-%m-%d') AS createDate,
+        w.department_id AS dept,
+        CASE WHEN o.goods_type=1 THEN 1 WHEN o.goods_type=2 THEN 2 WHEN o.goods_type IN(3,4,5,6) THEN 3 END AS type
+        FROM waybill w
+        INNER JOIN orders o on w.order_id=o.id
+        INNER JOIN waybill_goods g ON w.id = g.waybill_id
+        WHERE w.waybill_status='已完成' AND w.enabled=1 AND w.receipt_status=2 AND o.direct_order_flag='y'
         <if test="day!=null">
             AND date_format(w.modify_time, '%Y-%m-%d')=#{day}
         </if>
@@ -67,25 +84,6 @@
         </if>
         GROUP BY createDate,dept,type
         ) T_QuatityTotalWeightTotalStatistics GROUP BY createDate,dept,type
-
-        UNION
-        -- 异常单数统计
-        SELECT createDate,dept,CASE WHEN type=1 THEN 1 WHEN type=2 THEN 2 WHEN type IN(3,4,5,6) THEN 3 END AS type,
-        COUNT(1) AS anomalyTotal ,0 AS waybillTotal,0 AS QuatityTotal,0 AS WeightTotal ,0 AS incomeAnomalyFee,0 AS
-        expendAnomalyFee FROM(
-        SELECT DISTINCT
-        date_format(t.create_time, '%Y-%m-%d') AS createDate,
-        w.department_id AS dept,
-        ods.goods_type AS type,
-        t.waybill_id
-        FROM waybill w
-        RIGHT JOIN waybill_anomaly t ON w.id = t.waybill_id
-        INNER JOIN orders ods ON w.order_id = ods.id
-        WHERE w.enabled=1 AND t.processing_status!='已作废' AND w.waybill_status!='已作废'
-        <if test="day!=null">
-            AND date_format(t.create_time, '%Y-%m-%d')=#{day}
-        </if>
-        ) T_AnomalyWaybillStatistics GROUP BY createDate,dept,type
 
         UNION ALL
         -- 异常费用收入
