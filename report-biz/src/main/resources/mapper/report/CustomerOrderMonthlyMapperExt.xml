@@ -22,7 +22,7 @@
         sum(gross_profit) as gross_profit,
         create_time
         FROM
-        customer_order_daily
+        customer_order_monthly
         WHERE 1=1
         <if test="reportTime != null and reportTime != ''">
             AND SUBSTR(report_time,1,7) = #{reportTime}
@@ -34,9 +34,9 @@
             and goods_type = #{goodsType}
         </if>
         GROUP BY
+        report_time,
         customer_id,
         goods_type,
-        report_time,
         id
         ORDER BY report_time DESC
     </select>
@@ -63,4 +63,8 @@
             )
         </foreach>
     </insert>
+    <delete id="deleteByReportTime">
+        DELETE from customer_order_monthly
+        WHERE report_time = #{reportTime}
+    </delete>
 </mapper>
