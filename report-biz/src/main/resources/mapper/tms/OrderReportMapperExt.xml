@@ -14,7 +14,7 @@
                     0 as ordertotal,0 as anomalyTotal,count(1) as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
                     SELECT  distinct
                         date_format(t.create_time, '%Y-%m-%d') AS createDate ,
-                        w.department_id AS dept,
+                        w.network_id AS dept,
                         ods.goods_type AS type,
                         t.waybill_id
                     FROM waybill w
@@ -29,7 +29,7 @@
                     0 as ordertotal,count(1)  as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
                     SELECT distinct
                      date_format(t.create_time, '%Y-%m-%d') AS createDate,
-                     w.department_id AS dept,
+                     w.network_id AS dept,
                      ods.goods_type AS type,
                      t.waybill_id
                     FROM waybill w
@@ -45,7 +45,7 @@
                 from(
                     SELECT
                         date_format(w.create_time, '%Y-%m-%d') AS createDate,
-                        w.department_id AS dept,
+                        w.network_id AS dept,
                         ods.goods_type AS type,
                         count(1) as waybillTotal
                     FROM waybill w INNER JOIN orders ods on w.order_id = ods.id where w.enabled=1 group by createDate,dept,type
@@ -60,7 +60,7 @@
                 from(
                       SELECT
                           date_format(w.modify_time, '%Y-%m-%d') AS createDate,
-                          w.department_id AS dept,
+                          w.network_id AS dept,
                           ods.goods_type AS type,
                           count(1) as waybillFinishTotal
                       FROM
@@ -75,7 +75,7 @@
                         ordertotal,0 as anomalyTotal,0 as refusedTotal,0 as waybillTotal,0 as waybillFinishTotal,0 as QuatityTotal,0 as WeightTotal from(
                     SELECT
                         date_format(create_time, '%Y-%m-%d') AS createDate,
-                        department_id AS dept,
+                        network_id AS dept,
                         CASE WHEN goods_type=1 then 1 when goods_type=2 then 2 when goods_type in(3,4,5,6)  then 3 end as type,
                         count(1) as ordertotal
                     from orders where order_status!='取消' group by createDate,dept,type
@@ -92,7 +92,7 @@
                                 sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 2 吨（饲料） 卸货重量
                                 sum( CASE when o.goods_type in(3,4,5,6) THEN wg.unload_quantity ELSE 0 END) as pigQuantity,	-- 3 头（猪）   卸货数量
                                 date_format(w.modify_time, '%Y-%m-%d') AS createDate,
-                                w.department_id AS dept,
+                                w.network_id AS dept,
                                 CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
                             FROM waybill w
                             inner join orders o on w.order_id=o.id
@@ -105,7 +105,7 @@
                                 sum( CASE WHEN o.goods_type=2 THEN wg.unload_weight ELSE 0 END) as  FodderWeight,	-- 2 吨（饲料） 卸货重量
                                 sum( CASE when o.goods_type in(3,4,5,6) THEN wg.unload_quantity ELSE 0 END) as pigQuantity,	-- 3 头（猪）   卸货数量
                                 date_format(w.modify_time, '%Y-%m-%d') AS createDate,
-                                w.department_id AS dept,
+                                w.network_id AS dept,
                                 CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
                             FROM waybill w
                             inner join orders o on w.order_id=o.id
@@ -118,7 +118,7 @@
                                 0 FodderWeight,	-- 2 吨（饲料） 卸货重量
                                 0 as pigQuantity,	-- 3 头（猪）   卸货数量
                                 date_format(o.create_time, '%Y-%m-%d') AS createDate,
-                                o.department_id AS dept,
+                                o.network_id AS dept,
                                 CASE WHEN o.goods_type=1 then 1 when o.goods_type=2 then 2 when o.goods_type in(3,4,5,6)  then 3 end as type
                             FROM order_goods g left join orders o on g.order_id=o.id
                             where o.order_status!='取消' group by createDate,dept,type
