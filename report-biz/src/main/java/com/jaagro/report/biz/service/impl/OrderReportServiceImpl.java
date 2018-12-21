@@ -10,6 +10,7 @@ import com.jaagro.report.biz.mapper.report.DeptOrderMonthlyMapperExt;
 import com.jaagro.report.biz.mapper.tms.OrderReportMapperExt;
 import com.jaagro.report.biz.service.UserClientService;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.plexus.util.StringInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 //    @CacheEvict(cacheNames = "orderReport", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void createDailyReport(OrderReportDto orderReportDto) {
-        log.info("O OrderReportServiceImpl.createDailyReport orderReportDto:{}",orderReportDto);
+        log.info("O OrderReportServiceImpl.createDailyReport orderReportDto:{}", orderReportDto);
         String day = orderReportDto.getReportTime();
         List<DeptOrderDaily> deptOrderDailyList = new ArrayList<>();
         //1、从tms查询数据 day = '20181128'   yyyyMMdd
@@ -91,6 +93,7 @@ public class OrderReportServiceImpl implements OrderReportService {
         }
         log.info("O OrderReportServiceImpl.createDailyReportAsync-day={}", orderReportDto);
     }
+
     /**
      * 生成月报表数据
      *
@@ -140,7 +143,7 @@ public class OrderReportServiceImpl implements OrderReportService {
 
     @Override
     public List<DeptOrderDaily> getDeptOrderDailyDataListFromTms(OrderReportDto orderReportDto) {
-        log.info("S OrderReportServiceImpl.getDeptOrderDailyDataListFromTms orderReportDto:{}",orderReportDto);
+        log.info("S OrderReportServiceImpl.getDeptOrderDailyDataListFromTms orderReportDto:{}", orderReportDto);
         List<DeptOrderDaily> orderDailyList = orderReportMapperExt.getDeptOrderDailyDataListFromTms(orderReportDto);
         return orderDailyList;
     }
@@ -153,7 +156,7 @@ public class OrderReportServiceImpl implements OrderReportService {
      */
     @Override
     public List<DeptOrderMonthly> getOrderMonthlyDataFromOrderDaily(OrderReportDto orderReportDto) {
-        log.info("S OrderReportServiceImpl.getOrderMonthlyDataFromOrderDaily orderReportDto:{}",orderReportDto);
+        log.info("S OrderReportServiceImpl.getOrderMonthlyDataFromOrderDaily orderReportDto:{}", orderReportDto);
         return deptOrderDailyMapperExt.getOrderMonthlyDataFromOrderDaily(orderReportDto);
     }
 
@@ -161,7 +164,7 @@ public class OrderReportServiceImpl implements OrderReportService {
     @Override
 //    @Cacheable
     public List<DeptOrderDaily> listOrderDailyReport(OrderReportDto dto) {
-        log.info("S OrderReportServiceImpl.listOrderDailyReport dto:{}",dto);
+        log.info("S OrderReportServiceImpl.listOrderDailyReport dto:{}", dto);
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
             if (!CollectionUtils.isEmpty(deptIds)) {
@@ -172,9 +175,13 @@ public class OrderReportServiceImpl implements OrderReportService {
         if (!CollectionUtils.isEmpty(orderDailyList)) {
             List<DepartmentReturnDto> departmentReturnDtos = userClientService.getAllDepartments();
             for (DeptOrderDaily deptOrderDaily : orderDailyList) {
-                DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderDaily.getDepartmentId())).collect(Collectors.toList()).get(0);
-                if (null != departmentReturnDto) {
-                    deptOrderDaily.setDepartmentName(departmentReturnDto.getDepartmentName());
+                if (StringUtils.isEmpty(deptOrderDaily.getDepartmentId())) {
+                    deptOrderDaily.setDepartmentName("其它");
+                } else {
+                    DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderDaily.getDepartmentId())).collect(Collectors.toList()).get(0);
+                    if (null != departmentReturnDto) {
+                        deptOrderDaily.setDepartmentName(departmentReturnDto.getDepartmentName());
+                    }
                 }
             }
         }
@@ -185,7 +192,7 @@ public class OrderReportServiceImpl implements OrderReportService {
     @Override
 //    @Cacheable
     public List<DeptOrderMonthly> listOrderMonthlyReport(OrderReportDto dto) {
-        log.info("S OrderReportServiceImpl.listOrderMonthlyReport dto:{}",dto);
+        log.info("S OrderReportServiceImpl.listOrderMonthlyReport dto:{}", dto);
         if (null != dto.getDeptId()) {
             List<Integer> deptIds = userClientService.getDownDepartmentByDeptId(dto.getDeptId());
             if (!CollectionUtils.isEmpty(deptIds)) {
@@ -196,9 +203,13 @@ public class OrderReportServiceImpl implements OrderReportService {
         if (!CollectionUtils.isEmpty(orderMonthlyList)) {
             List<DepartmentReturnDto> departmentReturnDtos = userClientService.getAllDepartments();
             for (DeptOrderMonthly deptOrderMonthly : orderMonthlyList) {
-                DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderMonthly.getDepartmentId())).collect(Collectors.toList()).get(0);
-                if (null != departmentReturnDto) {
-                    deptOrderMonthly.setDepartmentName(departmentReturnDto.getDepartmentName());
+                if (StringUtils.isEmpty(deptOrderMonthly.getDepartmentId())) {
+                    deptOrderMonthly.setDepartmentName("其它");
+                } else {
+                    DepartmentReturnDto departmentReturnDto = departmentReturnDtos.stream().filter(c -> c.getId().equals(deptOrderMonthly.getDepartmentId())).collect(Collectors.toList()).get(0);
+                    if (null != departmentReturnDto) {
+                        deptOrderMonthly.setDepartmentName(departmentReturnDto.getDepartmentName());
+                    }
                 }
             }
         }

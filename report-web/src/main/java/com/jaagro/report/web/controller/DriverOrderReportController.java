@@ -78,29 +78,27 @@ public class DriverOrderReportController {
     }
 
     private List<DriverOrderReportVo> generateDriverOrderDailyVo(List<DriverOrderDaily> driverOrderDailyList) {
+        List<DriverOrderReportVo> orderReportVoList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(driverOrderDailyList)) {
-            List<DriverOrderReportVo> orderReportVoList = new ArrayList<>();
             for (DriverOrderDaily orderDaily : driverOrderDailyList) {
                 DriverOrderReportVo driverOrderReportVo = new DriverOrderReportVo();
                 BeanUtils.copyProperties(orderDaily, driverOrderReportVo);
                 orderReportVoList.add(driverOrderReportVo);
             }
-            return orderReportVoList;
         }
-        return null;
+        return orderReportVoList;
     }
 
     private List<DriverOrderReportVo> generateDriverOrderMonthlyVo(List<DriverOrderMonthly> driverOrderMonthlyList) {
+        List<DriverOrderReportVo> orderReportVoList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(driverOrderMonthlyList)) {
-            List<DriverOrderReportVo> orderReportVoList = new ArrayList<>();
             for (DriverOrderMonthly orderMonthly : driverOrderMonthlyList) {
                 DriverOrderReportVo driverOrderReportVo = new DriverOrderReportVo();
                 BeanUtils.copyProperties(orderMonthly, driverOrderReportVo);
                 orderReportVoList.add(driverOrderReportVo);
             }
-            return orderReportVoList;
         }
-        return null;
+        return orderReportVoList;
     }
 
     private void deleteNullOrderDaily(List<DriverOrderDaily> driverOrderDailyList){
